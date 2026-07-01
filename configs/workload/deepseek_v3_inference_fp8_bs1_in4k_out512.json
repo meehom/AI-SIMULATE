@@ -1,0 +1,9 @@
+{
+  "name": "deepseek_v3_inference_fp8_bs1_in4k_out512",
+  "model_name": "DeepSeek V3",
+  "mode": "inference",
+  "precision": "fp8",
+  "global_batch_size": 1,
+  "input_seq_len": 4096,
+  "output_seq_len": 512
+}

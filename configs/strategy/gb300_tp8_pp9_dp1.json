@@ -1,0 +1,7 @@
+{
+  "name": "gb300_tp8_pp9_dp1",
+  "tp_degree": 8,
+  "pp_degree": 9,
+  "dp_degree": 1,
+  "gpu_count_used": 72
+}

@@ -1,0 +1,11 @@
+{
+  "name": "gb300_deepseek_v3_inference_fp8_tp8_pp9_bs1_in4k_out512",
+  "system": {
+    "chip_config": "system/chip_config/GB300.json",
+    "topo_config": "system/topo_config/GB300.json"
+  },
+  "workload_config": "workload/deepseek_v3_inference_fp8_bs1_in4k_out512.json",
+  "strategy_config": "strategy/gb300_tp8_pp9_dp1.json",
+  "output_dir": "results/gb300_deepseek_v3_inference_fp8_tp8_pp9_bs1_in4k_out512",
+  "notes": "Baseline GB300 NVL72 inference experiment for DeepSeek V3 at FP8 with BS1, input 4096, output 512."
+}

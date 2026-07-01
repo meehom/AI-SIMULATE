@@ -156,6 +156,34 @@ AI-simulate/
 - `configs/` 关注 **输入与实验组合**
 - `src/` 关注 **实现与计算逻辑**
 
+### 首个 GB300 实验配置示例
+
+当前仓库已经补充了一条最小的 GB300 基线实验配置链路：
+
+- 模型：DeepSeek V3
+- 模式：推理
+- 精度：FP8
+- 硬件规模：GB300 NVL72 全 72 卡
+- 请求形状：BS1 / input 4096 / output 512
+- 并行策略：TP8 × PP9 × DP1
+
+对应配置文件为：
+
+- `configs/system/chip_config/GB300.json`
+- `configs/system/topo_config/GB300.json`
+- `configs/workload/deepseek_v3_inference_fp8_bs1_in4k_out512.json`
+- `configs/strategy/gb300_tp8_pp9_dp1.json`
+- `configs/experiments/gb300_deepseek_v3_inference_fp8_tp8_pp9_bs1_in4k_out512.json`
+
+其中：
+
+- `system/` 负责描述 GB300 单卡能力与 72 卡互联参数
+- `workload/` 负责描述模型、精度、batch 和输入输出长度
+- `strategy/` 负责描述 TP / PP / DP 并行切分
+- `experiments/` 负责把前三类配置组合成一个完整实验入口
+
+更多约定可参考 `configs/README.md`。
+
 ## 适用场景
 
 本项目适用于：
