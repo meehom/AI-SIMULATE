@@ -1,0 +1,6 @@
+{
+  "name": "NVIDIA GB300 NVL72",
+  "gpu_count": 72,
+  "interconnect_bandwidth_gb_per_s": 900,
+  "latency_us": 10
+}

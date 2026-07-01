@@ -1,0 +1,16 @@
+{
+  "name": "NVIDIA GB300",
+  "vendor": "NVIDIA",
+  "architecture": "Blackwell Ultra",
+  "precision_performance": {
+    "fp4_tflops": 15000,
+    "fp8_tflops": 10000,
+    "fp16_tflops": 5000,
+    "fp32_tflops": 83.3
+  },
+  "memory": {
+    "type": "HBM3e",
+    "capacity_gb": 288,
+    "bandwidth_tb_per_s": 8.0
+  }
+}
