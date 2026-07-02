@@ -1,0 +1,536 @@
+{
+  "experiment_name": "gb300_deepseek_v3_inference_fp8_tp8_pp9_bs1_in4k_out512",
+  "experiment_path": "/Users/meehomliao/Desktop/AI-simulate/configs/experiments/gb300_deepseek_v3_inference_fp8_tp8_pp9_bs1_in4k_out512.json",
+  "resolved_config_paths": {
+    "experiment": "/Users/meehomliao/Desktop/AI-simulate/configs/experiments/gb300_deepseek_v3_inference_fp8_tp8_pp9_bs1_in4k_out512.json",
+    "chip_config": "/Users/meehomliao/Desktop/AI-simulate/configs/system/chip_config/GB300.json",
+    "topo_config": "/Users/meehomliao/Desktop/AI-simulate/configs/system/topo_config/GB300.json",
+    "workload_config": "/Users/meehomliao/Desktop/AI-simulate/configs/workload/deepseek_v3_inference_fp8_bs1_in4k_out512.json",
+    "strategy_config": "/Users/meehomliao/Desktop/AI-simulate/configs/strategy/gb300_tp8_pp9_dp1.json"
+  },
+  "system_config": {
+    "chip": {
+      "name": "NVIDIA GB300",
+      "vendor": "NVIDIA",
+      "architecture": "Blackwell Ultra",
+      "precision_performance": {
+        "fp4_tflops": 15000,
+        "fp8_tflops": 10000,
+        "fp16_tflops": 5000,
+        "fp32_tflops": 83.3
+      },
+      "memory": {
+        "type": "HBM3e",
+        "capacity_gb": 288,
+        "bandwidth_tb_per_s": 8.0
+      }
+    },
+    "topology": {
+      "name": "NVIDIA GB300 NVL72",
+      "gpu_count": 72,
+      "interconnect_bandwidth_gb_per_s": 900,
+      "latency_us": 10
+    }
+  },
+  "workload_config": {
+    "name": "deepseek_v3_inference_fp8_bs1_in4k_out512",
+    "model_name": "DeepSeek V3",
+    "mode": "inference",
+    "precision": "fp8",
+    "global_batch_size": 1,
+    "input_seq_len": 4096,
+    "output_seq_len": 512
+  },
+  "strategy_config": {
+    "name": "gb300_tp8_pp9_dp1",
+    "tp_degree": 8,
+    "pp_degree": 9,
+    "dp_degree": 1,
+    "gpu_count_used": 72
+  },
+  "analysis": {
+    "phase": "prefill",
+    "logical_precision": "fp8",
+    "roofline_context": {
+      "precision": "fp8",
+      "peak_compute_tflops": 10000.0,
+      "peak_memory_tb_per_s": 8.0,
+      "peak_compute_flops_per_s": 1e+16,
+      "peak_memory_bytes_per_s": 8000000000000.0,
+      "ridge_point_flops_per_byte": 1250.0
+    },
+    "ops": [
+      {
+        "op_index": 0,
+        "op_name": "aten.native_layer_norm.default",
+        "module_path": null,
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "input_tensors": [
+          {
+            "shape": [
+              1,
+              4096,
+              7168
+            ],
+            "dtype": "float32",
+            "numel": 29360128,
+            "device": "meta"
+          },
+          {
+            "shape": [
+              7168
+            ],
+            "dtype": "float32",
+            "numel": 7168,
+            "device": "meta"
+          },
+          {
+            "shape": [
+              7168
+            ],
+            "dtype": "float32",
+            "numel": 7168,
+            "device": "meta"
+          }
+        ],
+        "output_tensors": [
+          {
+            "shape": [
+              1,
+              4096,
+              7168
+            ],
+            "dtype": "float32",
+            "numel": 29360128,
+            "device": "meta"
+          },
+          {
+            "shape": [
+              1,
+              4096,
+              1
+            ],
+            "dtype": "float32",
+            "numel": 4096,
+            "device": "meta"
+          },
+          {
+            "shape": [
+              1,
+              4096,
+              1
+            ],
+            "dtype": "float32",
+            "numel": 4096,
+            "device": "meta"
+          }
+        ],
+        "attrs": {
+          "normalized_shape": [
+            7168
+          ],
+          "eps": 1e-05
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "local_input_tensors": [
+          {
+            "shape": [
+              1,
+              4096,
+              7168
+            ],
+            "dtype": "float32",
+            "numel": 29360128,
+            "device": "meta"
+          },
+          {
+            "shape": [
+              7168
+            ],
+            "dtype": "float32",
+            "numel": 7168,
+            "device": "meta"
+          },
+          {
+            "shape": [
+              7168
+            ],
+            "dtype": "float32",
+            "numel": 7168,
+            "device": "meta"
+          }
+        ],
+        "local_output_tensors": [
+          {
+            "shape": [
+              1,
+              4096,
+              7168
+            ],
+            "dtype": "float32",
+            "numel": 29360128,
+            "device": "meta"
+          },
+          {
+            "shape": [
+              1,
+              4096,
+              1
+            ],
+            "dtype": "float32",
+            "numel": 4096,
+            "device": "meta"
+          },
+          {
+            "shape": [
+              1,
+              4096,
+              1
+            ],
+            "dtype": "float32",
+            "numel": 4096,
+            "device": "meta"
+          }
+        ],
+        "metrics": {
+          "flops": 205520896.0,
+          "memory_bytes_read": 29374464,
+          "memory_bytes_written": 29360128,
+          "memory_bytes_total": 58734592,
+          "arithmetic_intensity": 3.4991457163778374,
+          "compute_time_s": 2.05520896e-08,
+          "memory_time_s": 7.341824e-06,
+          "predicted_time_s": 7.341824e-06,
+          "bottleneck": "memory",
+          "estimator_status": "ok"
+        }
+      },
+      {
+        "op_index": 1,
+        "op_name": "aten.addmm.default",
+        "module_path": null,
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "input_tensors": [
+          {
+            "shape": [
+              18432
+            ],
+            "dtype": "float32",
+            "numel": 18432,
+            "device": "meta"
+          },
+          {
+            "shape": [
+              4096,
+              7168
+            ],
+            "dtype": "float32",
+            "numel": 29360128,
+            "device": "meta"
+          },
+          {
+            "shape": [
+              7168,
+              18432
+            ],
+            "dtype": "float32",
+            "numel": 132120576,
+            "device": "meta"
+          }
+        ],
+        "output_tensors": [
+          {
+            "shape": [
+              4096,
+              18432
+            ],
+            "dtype": "float32",
+            "numel": 75497472,
+            "device": "meta"
+          }
+        ],
+        "attrs": {},
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "column"
+        },
+        "local_input_tensors": [
+          {
+            "shape": [
+              2304
+            ],
+            "dtype": "float32",
+            "numel": 2304,
+            "device": "meta"
+          },
+          {
+            "shape": [
+              4096,
+              7168
+            ],
+            "dtype": "float32",
+            "numel": 29360128,
+            "device": "meta"
+          },
+          {
+            "shape": [
+              7168,
+              2304
+            ],
+            "dtype": "float32",
+            "numel": 16515072,
+            "device": "meta"
+          }
+        ],
+        "local_output_tensors": [
+          {
+            "shape": [
+              4096,
+              2304
+            ],
+            "dtype": "float32",
+            "numel": 9437184,
+            "device": "meta"
+          }
+        ],
+        "metrics": {
+          "flops": 135291469824.0,
+          "memory_bytes_read": 45877504,
+          "memory_bytes_written": 9437184,
+          "memory_bytes_total": 55314688,
+          "arithmetic_intensity": 2445.8507263748825,
+          "compute_time_s": 1.35291469824e-05,
+          "memory_time_s": 6.914336e-06,
+          "predicted_time_s": 1.35291469824e-05,
+          "bottleneck": "compute",
+          "estimator_status": "ok"
+        }
+      },
+      {
+        "op_index": 2,
+        "op_name": "aten.gelu.default",
+        "module_path": null,
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "input_tensors": [
+          {
+            "shape": [
+              1,
+              4096,
+              18432
+            ],
+            "dtype": "float32",
+            "numel": 75497472,
+            "device": "meta"
+          }
+        ],
+        "output_tensors": [
+          {
+            "shape": [
+              1,
+              4096,
+              18432
+            ],
+            "dtype": "float32",
+            "numel": 75497472,
+            "device": "meta"
+          }
+        ],
+        "attrs": {},
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "local_input_tensors": [
+          {
+            "shape": [
+              1,
+              4096,
+              18432
+            ],
+            "dtype": "float32",
+            "numel": 75497472,
+            "device": "meta"
+          }
+        ],
+        "local_output_tensors": [
+          {
+            "shape": [
+              1,
+              4096,
+              18432
+            ],
+            "dtype": "float32",
+            "numel": 75497472,
+            "device": "meta"
+          }
+        ],
+        "metrics": {
+          "flops": 603979776.0,
+          "memory_bytes_read": 75497472,
+          "memory_bytes_written": 75497472,
+          "memory_bytes_total": 150994944,
+          "arithmetic_intensity": 4.0,
+          "compute_time_s": 6.03979776e-08,
+          "memory_time_s": 1.8874368e-05,
+          "predicted_time_s": 1.8874368e-05,
+          "bottleneck": "memory",
+          "estimator_status": "ok"
+        }
+      },
+      {
+        "op_index": 3,
+        "op_name": "aten.addmm.default",
+        "module_path": null,
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "input_tensors": [
+          {
+            "shape": [
+              7168
+            ],
+            "dtype": "float32",
+            "numel": 7168,
+            "device": "meta"
+          },
+          {
+            "shape": [
+              4096,
+              18432
+            ],
+            "dtype": "float32",
+            "numel": 75497472,
+            "device": "meta"
+          },
+          {
+            "shape": [
+              18432,
+              7168
+            ],
+            "dtype": "float32",
+            "numel": 132120576,
+            "device": "meta"
+          }
+        ],
+        "output_tensors": [
+          {
+            "shape": [
+              4096,
+              7168
+            ],
+            "dtype": "float32",
+            "numel": 29360128,
+            "device": "meta"
+          }
+        ],
+        "attrs": {},
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "row"
+        },
+        "local_input_tensors": [
+          {
+            "shape": [
+              7168
+            ],
+            "dtype": "float32",
+            "numel": 7168,
+            "device": "meta"
+          },
+          {
+            "shape": [
+              4096,
+              2304
+            ],
+            "dtype": "float32",
+            "numel": 9437184,
+            "device": "meta"
+          },
+          {
+            "shape": [
+              2304,
+              7168
+            ],
+            "dtype": "float32",
+            "numel": 16515072,
+            "device": "meta"
+          }
+        ],
+        "local_output_tensors": [
+          {
+            "shape": [
+              4096,
+              7168
+            ],
+            "dtype": "float32",
+            "numel": 29360128,
+            "device": "meta"
+          }
+        ],
+        "metrics": {
+          "flops": 135291469824.0,
+          "memory_bytes_read": 25959424,
+          "memory_bytes_written": 29360128,
+          "memory_bytes_total": 55319552,
+          "arithmetic_intensity": 2445.6356736945377,
+          "compute_time_s": 1.35291469824e-05,
+          "memory_time_s": 6.914944e-06,
+          "predicted_time_s": 1.35291469824e-05,
+          "bottleneck": "compute",
+          "estimator_status": "ok"
+        }
+      }
+    ],
+    "summary": {
+      "captured_op_count": 4,
+      "unsupported_op_count": 0,
+      "total_flops": 271392440320.0,
+      "total_memory_bytes": 320363776,
+      "total_predicted_time_s": 5.32744859648e-05
+    },
+    "model_proxy_type": "deepseek_v3_2layer_mlp",
+    "proxy_input_spec": {
+      "shape": [
+        1,
+        4096,
+        7168
+      ],
+      "hidden_size": 7168,
+      "intermediate_size": 18432,
+      "activation": "gelu",
+      "analysis_phase": "prefill"
+    },
+    "recorded_output_seq_len": 512
+  },
+  "generated_at_utc": "2026-07-02T15:37:30.248719+00:00",
+  "notes": [
+    "This prototype uses a 2-layer MLP as a stand-in for DeepSeek V3.",
+    "Analysis phase is restricted to prefill semantics in v1.",
+    "Current roofline timing is based on intercepted built-in PyTorch ops under dispatch capture."
+  ]
+}
