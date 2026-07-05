@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import csv
 import json
 from datetime import datetime, timezone
 from pathlib import Path
@@ -68,6 +69,122 @@ def _build_result_payload(
     }
 
 
+def _shape_string(tensors: list[Dict[str, Any]]) -> str:
+    if not tensors:
+        return ""
+    return json.dumps(tensors[0]["shape"])
+
+
+def _bottleneck_label(raw: str) -> str:
+    return "compute_bound" if raw == "compute" else "memory_bound"
+
+
+def _write_operator_csv(output_dir: Path, analysis_result: Dict[str, Any]) -> Path:
+    csv_path = output_dir / "op_trace.csv"
+    with csv_path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.writer(handle)
+        writer.writerow([
+            "op_index",
+            "op_name",
+            "op_kind",
+            "op_time",
+            "analysis",
+            "flops",
+            "memory_bytes_total",
+            "arithmetic_intensity",
+            "input_shape",
+            "output_shape",
+        ])
+        for op in analysis_result["ops"]:
+            metrics = op["metrics"]
+            writer.writerow(
+                [
+                    op["op_index"],
+                    op["op_name"],
+                    op["op_kind"],
+                    metrics["predicted_time_s"],
+                    _bottleneck_label(metrics["bottleneck"]),
+                    metrics["flops"],
+                    metrics["memory_bytes_total"],
+                    metrics["arithmetic_intensity"],
+                    _shape_string(op.get("input_tensors", [])),
+                    _shape_string(op.get("output_tensors", [])),
+                ]
+            )
+    return csv_path
+
+
+def _trace_shape(tensors: list[Dict[str, Any]]) -> list[int] | None:
+    if not tensors:
+        return None
+    return tensors[0].get("shape")
+
+
+def _write_chrome_trace(output_dir: Path, result_payload: Dict[str, Any]) -> Path:
+    trace_path = output_dir / "chrome_trace.json"
+    analysis = result_payload["analysis"]
+    trace_events = [
+        {
+            "name": "process_name",
+            "ph": "M",
+            "pid": 1,
+            "tid": 0,
+            "args": {"name": result_payload["experiment_name"]},
+        },
+        {
+            "name": "thread_name",
+            "ph": "M",
+            "pid": 1,
+            "tid": 0,
+            "args": {"name": "predicted_op_timeline"},
+        },
+    ]
+
+    cursor_us = 0.0
+    for op in analysis["ops"]:
+        metrics = op["metrics"]
+        raw_dur_us = float(metrics["predicted_time_s"]) * 1e6
+        dur_us = raw_dur_us if raw_dur_us > 0 else 1.0
+        trace_events.append(
+            {
+                "name": op["op_name"],
+                "cat": "operator",
+                "ph": "X",
+                "pid": 1,
+                "tid": 0,
+                "ts": cursor_us,
+                "dur": dur_us,
+                "args": {
+                    "op_index": op["op_index"],
+                    "op_kind": op["op_kind"],
+                    "predicted_time_s": metrics["predicted_time_s"],
+                    "compute_time_s": metrics["compute_time_s"],
+                    "memory_time_s": metrics["memory_time_s"],
+                    "bottleneck": _bottleneck_label(metrics["bottleneck"]),
+                    "flops": metrics["flops"],
+                    "memory_bytes_total": metrics["memory_bytes_total"],
+                    "arithmetic_intensity": metrics["arithmetic_intensity"],
+                    "input_shape": _trace_shape(op.get("input_tensors", [])),
+                    "output_shape": _trace_shape(op.get("output_tensors", [])),
+                    "local_input_shape": _trace_shape(op.get("local_input_tensors", [])),
+                    "local_output_shape": _trace_shape(op.get("local_output_tensors", [])),
+                    "precision_context": op.get("precision_context", {}),
+                    "parallelism": op.get("parallelism", {}),
+                    "attrs": op.get("attrs", {}),
+                },
+            }
+        )
+        cursor_us += dur_us
+
+    trace_payload = {
+        "traceEvents": trace_events,
+        "displayTimeUnit": "ms",
+    }
+    with trace_path.open("w", encoding="utf-8") as handle:
+        json.dump(trace_payload, handle, indent=2, ensure_ascii=False)
+    return trace_path
+
+
 def run_meta_analysis_experiment(experiment_path: str | Path, phase: str = "prefill") -> Dict[str, Any]:
     if phase != "prefill":
         raise ValueError(f"Unsupported analysis phase for v1: {phase}")
@@ -100,5 +217,10 @@ def run_meta_analysis_experiment(experiment_path: str | Path, phase: str = "pref
     with output_path.open("w", encoding="utf-8") as handle:
         json.dump(result_payload, handle, indent=2, ensure_ascii=False)
 
+    csv_path = _write_operator_csv(output_dir, analysis_result)
+    trace_path = _write_chrome_trace(output_dir, result_payload)
+
     result_payload["output_path"] = str(output_path)
+    result_payload["op_csv_path"] = str(csv_path)
+    result_payload["trace_output_path"] = str(trace_path)
     return result_payload

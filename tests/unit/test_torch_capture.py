@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from ai_simulate.workload import build_deepseek_v3_proxy, capture_model_ops
 
 
@@ -30,8 +28,8 @@ def test_torch_capture_records_expected_supported_ops() -> None:
         "aten.native_layer_norm.default",
         "aten.addmm.default",
         "aten.gelu.default",
-        "aten.addmm.default",
+        "custom.fc2.default",
     ]
     assert records[0].output_tensors[0].shape == [1, 16, 32]
     assert records[1].local_output_tensors[0].shape == [16, 8]
-    assert records[3].local_input_tensors[1].shape == [16, 8]
+    assert records[3].op_kind == "custom"

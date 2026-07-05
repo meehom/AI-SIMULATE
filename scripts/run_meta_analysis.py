@@ -20,6 +20,8 @@ def main() -> None:
     summary = result["analysis"]["summary"]
     print(f"Experiment: {result['experiment_name']}")
     print(f"Output: {result['output_path']}")
+    print(f"CSV: {result['op_csv_path']}")
+    print(f"Trace: {result['trace_output_path']}")
     print(
         "Captured ops: {op_count}, Total FLOPs: {total_flops:.2f}, Total predicted time (s): {total_time:.6e}".format(
             op_count=summary["captured_op_count"],

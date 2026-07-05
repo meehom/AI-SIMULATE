@@ -33,10 +33,11 @@ class TensorMetadata:
 class OpRecord:
     op_index: int
     op_name: str
-    module_path: str | None
-    precision_context: Dict[str, str]
-    input_tensors: List[TensorMetadata]
-    output_tensors: List[TensorMetadata]
+    op_kind: str = "builtin"
+    module_path: str | None = None
+    precision_context: Dict[str, str] = field(default_factory=dict)
+    input_tensors: List[TensorMetadata] = field(default_factory=list)
+    output_tensors: List[TensorMetadata] = field(default_factory=list)
     attrs: Dict[str, Any] = field(default_factory=dict)
     parallelism: Dict[str, Any] = field(default_factory=dict)
     local_input_tensors: List[TensorMetadata] = field(default_factory=list)
@@ -47,6 +48,7 @@ class OpRecord:
         return {
             "op_index": self.op_index,
             "op_name": self.op_name,
+            "op_kind": self.op_kind,
             "module_path": self.module_path,
             "precision_context": self.precision_context,
             "input_tensors": [tensor.to_dict() for tensor in self.input_tensors],
@@ -56,6 +58,23 @@ class OpRecord:
             "local_input_tensors": [tensor.to_dict() for tensor in self.local_input_tensors],
             "local_output_tensors": [tensor.to_dict() for tensor in self.local_output_tensors],
             "metrics": self.metrics,
+        }
+
+
+@dataclass(frozen=True)
+class MemoryStats:
+    read_bytes: int
+    write_bytes: int
+
+    @property
+    def total_bytes(self) -> int:
+        return self.read_bytes + self.write_bytes
+
+    def to_dict(self) -> Dict[str, int]:
+        return {
+            "read_bytes": self.read_bytes,
+            "write_bytes": self.write_bytes,
+            "total_bytes": self.total_bytes,
         }
 
 

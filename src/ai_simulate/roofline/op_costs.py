@@ -5,6 +5,7 @@ from math import prod
 from typing import Callable, Dict
 
 from ai_simulate.core.op_record import OpRecord, bytes_per_precision, shape_numel
+from ai_simulate.custom import get_custom_estimator
 
 
 ACTIVATION_FLOP_COST = {
@@ -40,12 +41,19 @@ def register_operator(op_name: str, spec: OperatorSpec) -> None:
 
 
 def get_flops(op_record: OpRecord) -> float:
+    if op_record.op_name.startswith("custom."):
+        estimator = get_custom_estimator(op_record.op_name)
+        return float(estimator["get_flops"](op_record))
     if op_record.op_name not in REGISTRY:
         raise UnsupportedEstimatorError(f"No FLOPs estimator registered for {op_record.op_name}")
     return REGISTRY[op_record.op_name].get_flops(op_record)
 
 
 def get_memory(op_record: OpRecord) -> MemoryStats:
+    if op_record.op_name.startswith("custom."):
+        estimator = get_custom_estimator(op_record.op_name)
+        stats = estimator["get_memory"](op_record)
+        return MemoryStats(read_bytes=stats.read_bytes, write_bytes=stats.write_bytes)
     if op_record.op_name not in REGISTRY:
         raise UnsupportedEstimatorError(f"No memory estimator registered for {op_record.op_name}")
     return REGISTRY[op_record.op_name].get_memory(op_record)
@@ -58,10 +66,9 @@ def _tensor_bytes(numel: int, precision: str) -> int:
 def _addmm_flops(op_record: OpRecord) -> float:
     activations = op_record.local_input_tensors[1]
     weights = op_record.local_input_tensors[2]
-    output = op_record.local_output_tensors[0]
     batch_tokens = int(prod(activations.shape[:-1]))
     in_features = int(activations.shape[-1])
-    out_features = int(output.shape[-1])
+    out_features = int(weights.shape[0])
     return float(2 * batch_tokens * in_features * out_features)
 
 

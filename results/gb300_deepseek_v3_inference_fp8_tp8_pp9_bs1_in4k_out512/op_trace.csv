@@ -1,0 +1,5 @@
+op_index,op_name,op_kind,op_time,analysis,flops,memory_bytes_total,arithmetic_intensity,input_shape,output_shape
+0,aten.native_layer_norm.default,builtin,7.341824e-06,memory_bound,205520896.0,58734592,3.4991457163778374,"[1, 4096, 7168]","[1, 4096, 7168]"
+1,aten.addmm.default,builtin,4.20906795008e-05,compute_bound,420906795008.0,55314688,7609.313370944079,[18432],"[4096, 18432]"
+2,aten.gelu.default,builtin,1.8874368e-05,memory_bound,603979776.0,150994944,4.0,"[1, 4096, 18432]","[1, 4096, 18432]"
+3,custom.fc2.default,custom,1.35291469824e-05,compute_bound,135291469824.0,55319552,2445.6356736945377,"[1, 4096, 18432]","[1, 4096, 7168]"

@@ -3,7 +3,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Dict, List
 
+import torch
 import torch.nn as nn
+
+from ai_simulate.custom import CustomFC2
 
 
 DEFAULT_DEEPSEEK_V3_PROXY_CONFIG = {
@@ -35,7 +38,7 @@ class DeepSeekV3ProxyMLP(nn.Module):
         self.norm = nn.LayerNorm(hidden_size, eps=norm_eps)
         self.fc1 = nn.Linear(hidden_size, intermediate_size)
         self.activation = self._build_activation(activation)
-        self.fc2 = nn.Linear(intermediate_size, hidden_size)
+        self.cus_fc2 = CustomFC2(intermediate_size, hidden_size)
 
     @staticmethod
     def _build_activation(name: str) -> nn.Module:
@@ -50,7 +53,7 @@ class DeepSeekV3ProxyMLP(nn.Module):
         x = self.norm(x)
         x = self.fc1(x)
         x = self.activation(x)
-        return self.fc2(x)
+        return self.cus_fc2(x)
 
 
 def build_deepseek_v3_proxy(
@@ -70,12 +73,14 @@ def build_deepseek_v3_proxy(
     batch_size = int(workload_config["global_batch_size"])
     input_seq_len = int(workload_config["input_seq_len"])
 
-    model = DeepSeekV3ProxyMLP(
-        hidden_size=hidden_size,
-        intermediate_size=intermediate_size,
-        activation=activation,
-        norm_eps=norm_eps,
-    )
+    with torch.device("meta"):
+        model = DeepSeekV3ProxyMLP(
+            hidden_size=hidden_size,
+            intermediate_size=intermediate_size,
+            activation=activation,
+            norm_eps=norm_eps,
+        )
+
     input_spec = ProxyInputSpec(
         shape=[batch_size, input_seq_len, hidden_size],
         hidden_size=hidden_size,

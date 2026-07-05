@@ -13,6 +13,7 @@ def test_op_record_to_dict() -> None:
     op = OpRecord(
         op_index=0,
         op_name="aten.addmm.default",
+        op_kind="builtin",
         module_path="fc1",
         precision_context={"storage_precision": "fp8", "compute_precision": "fp8", "accum_precision": "fp16"},
         input_tensors=[TensorMetadata(shape=[1, 2, 3], dtype="float32", numel=6, device="meta")],

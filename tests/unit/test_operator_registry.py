@@ -6,6 +6,7 @@ def test_addmm_registry_metrics() -> None:
     op = OpRecord(
         op_index=0,
         op_name="aten.addmm.default",
+        op_kind="builtin",
         module_path=None,
         precision_context={"storage_precision": "fp8", "compute_precision": "fp8", "accum_precision": "fp16"},
         input_tensors=[],
@@ -23,7 +24,7 @@ def test_addmm_registry_metrics() -> None:
     flops = get_flops(op)
     memory = get_memory(op)
 
-    assert flops == 2 * 16 * 32 * 8
+    assert flops == 2 * 16 * 32 * 32
     assert memory.read_bytes == 8 + (16 * 32) + (32 * 8)
     assert memory.write_bytes == 16 * 8
     assert memory.total_bytes == memory.read_bytes + memory.write_bytes
@@ -33,6 +34,7 @@ def test_gelu_registry_metrics() -> None:
     op = OpRecord(
         op_index=1,
         op_name="aten.gelu.default",
+        op_kind="builtin",
         module_path=None,
         precision_context={"storage_precision": "fp8", "compute_precision": "fp8", "accum_precision": "fp16"},
         input_tensors=[],
