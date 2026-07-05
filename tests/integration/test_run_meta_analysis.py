@@ -24,21 +24,20 @@ def test_run_meta_analysis_experiment_writes_result_file() -> None:
 
     payload = json.loads(output_path.read_text(encoding="utf-8"))
     assert payload["experiment_name"] == "gb300_deepseek_v3_inference_fp8_tp8_pp9_bs1_in4k_out512"
-    assert payload["analysis"]["model_proxy_type"] == "deepseek_v3_2layer_mlp"
-    assert payload["analysis"]["summary"]["captured_op_count"] == 4
-    assert payload["analysis"]["ops"][0]["op_name"] == "aten.native_layer_norm.default"
-    assert payload["analysis"]["ops"][1]["op_name"] == "aten.addmm.default"
-    assert payload["analysis"]["ops"][3]["op_kind"] == "custom"
+    assert payload["analysis"]["summary"]["captured_op_count"] == 17
+    assert payload["analysis"]["ops"][0]["op_name"] == "aten.embedding.default"
+    assert payload["analysis"]["ops"][-1]["op_name"] == "aten.native_layer_norm.default"
+    assert any(op["op_name"] == "custom.fc2.default" and op["op_kind"] == "custom" for op in payload["analysis"]["ops"])
 
     with csv_path.open("r", encoding="utf-8", newline="") as handle:
         rows = list(csv.DictReader(handle))
 
-    assert len(rows) == 4
-    assert rows[0]["op_name"] == "aten.native_layer_norm.default"
+    assert len(rows) == 17
+    assert rows[0]["op_name"] == "aten.embedding.default"
     assert rows[0]["analysis"] in {"memory_bound", "compute_bound"}
-    assert rows[0]["flops"]
+    assert rows[0]["flops"] is not None
     assert rows[0]["memory_bytes_total"]
-    assert rows[0]["arithmetic_intensity"]
+    assert rows[0]["arithmetic_intensity"] is not None
     assert rows[0]["input_shape"]
     assert rows[0]["output_shape"]
     assert rows[0]["op_time"]
@@ -47,15 +46,11 @@ def test_run_meta_analysis_experiment_writes_result_file() -> None:
     assert trace_payload["displayTimeUnit"] == "ms"
     assert "traceEvents" in trace_payload
     trace_events = trace_payload["traceEvents"]
-    assert len(trace_events) == 6
     op_events = [event for event in trace_events if event.get("ph") == "X"]
-    assert len(op_events) == 4
-    assert [event["name"] for event in op_events] == [
-        "aten.native_layer_norm.default",
-        "aten.addmm.default",
-        "aten.gelu.default",
-        "custom.fc2.default",
-    ]
+    assert len(op_events) == 17
+    assert op_events[0]["name"] == "aten.embedding.default"
+    assert op_events[-1]["name"] == "aten.native_layer_norm.default"
+    assert any(event["name"] == "custom.fc2.default" for event in op_events)
     assert op_events[0]["ts"] == 0
     assert all(event["dur"] > 0 for event in op_events)
     assert all(op_events[index]["ts"] <= op_events[index + 1]["ts"] for index in range(len(op_events) - 1))

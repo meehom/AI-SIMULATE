@@ -4,12 +4,15 @@ from dataclasses import dataclass
 from math import prod
 from typing import Callable, Dict
 
-from ai_simulate.core.op_record import OpRecord, bytes_per_precision, shape_numel
+from ai_simulate.core.op_record import OpRecord, bytes_per_precision
 from ai_simulate.custom import get_custom_estimator
 
 
 ACTIVATION_FLOP_COST = {
     "aten.gelu.default": 8.0,
+    "aten.div.Tensor": 1.0,
+    "aten._softmax.default": 5.0,
+    "aten.add.Tensor": 1.0,
 }
 
 
@@ -63,6 +66,20 @@ def _tensor_bytes(numel: int, precision: str) -> int:
     return int(numel) * bytes_per_precision(precision)
 
 
+def _embedding_flops(op_record: OpRecord) -> float:
+    return 0.0
+
+
+def _embedding_memory(op_record: OpRecord) -> MemoryStats:
+    precision = op_record.precision_context["storage_precision"]
+    weight, indices = op_record.local_input_tensors
+    output = op_record.local_output_tensors[0]
+    read_bytes = _tensor_bytes(weight.numel, precision)
+    read_bytes += indices.numel * 8
+    write_bytes = _tensor_bytes(output.numel, precision)
+    return MemoryStats(read_bytes=read_bytes, write_bytes=write_bytes)
+
+
 def _addmm_flops(op_record: OpRecord) -> float:
     activations = op_record.local_input_tensors[1]
     weights = op_record.local_input_tensors[2]
@@ -101,23 +118,47 @@ def _layer_norm_memory(op_record: OpRecord) -> MemoryStats:
     return MemoryStats(read_bytes=read_bytes, write_bytes=write_bytes)
 
 
-def _gelu_flops(op_record: OpRecord) -> float:
+def _elementwise_flops(op_record: OpRecord) -> float:
     output = op_record.local_output_tensors[0]
-    return float(ACTIVATION_FLOP_COST[op_record.op_name] * output.numel)
+    flop_cost = ACTIVATION_FLOP_COST[op_record.op_name]
+    return float(flop_cost * output.numel)
 
 
-def _gelu_memory(op_record: OpRecord) -> MemoryStats:
+def _elementwise_memory(op_record: OpRecord) -> MemoryStats:
     precision = op_record.precision_context["storage_precision"]
-    input_tensor = op_record.local_input_tensors[0]
+    total_input_numel = sum(tensor.numel for tensor in op_record.local_input_tensors)
     output = op_record.local_output_tensors[0]
-    read_bytes = _tensor_bytes(input_tensor.numel, precision)
+    read_bytes = _tensor_bytes(total_input_numel, precision)
     write_bytes = _tensor_bytes(output.numel, precision)
     return MemoryStats(read_bytes=read_bytes, write_bytes=write_bytes)
 
 
+def _bmm_flops(op_record: OpRecord) -> float:
+    lhs = op_record.local_input_tensors[0]
+    rhs = op_record.local_input_tensors[1]
+    batch, m, k = lhs.shape
+    _batch2, _k, n = rhs.shape
+    return float(2 * batch * m * k * n)
+
+
+def _bmm_memory(op_record: OpRecord) -> MemoryStats:
+    precision = op_record.precision_context["storage_precision"]
+    lhs = op_record.local_input_tensors[0]
+    rhs = op_record.local_input_tensors[1]
+    output = op_record.local_output_tensors[0]
+    read_bytes = _tensor_bytes(lhs.numel, precision) + _tensor_bytes(rhs.numel, precision)
+    write_bytes = _tensor_bytes(output.numel, precision)
+    return MemoryStats(read_bytes=read_bytes, write_bytes=write_bytes)
+
+
+register_operator("aten.embedding.default", OperatorSpec(get_flops=_embedding_flops, get_memory=_embedding_memory))
 register_operator("aten.addmm.default", OperatorSpec(get_flops=_addmm_flops, get_memory=_addmm_memory))
 register_operator(
     "aten.native_layer_norm.default",
     OperatorSpec(get_flops=_layer_norm_flops, get_memory=_layer_norm_memory),
 )
-register_operator("aten.gelu.default", OperatorSpec(get_flops=_gelu_flops, get_memory=_gelu_memory))
+register_operator("aten.gelu.default", OperatorSpec(get_flops=_elementwise_flops, get_memory=_elementwise_memory))
+register_operator("aten.div.Tensor", OperatorSpec(get_flops=_elementwise_flops, get_memory=_elementwise_memory))
+register_operator("aten._softmax.default", OperatorSpec(get_flops=_elementwise_flops, get_memory=_elementwise_memory))
+register_operator("aten.add.Tensor", OperatorSpec(get_flops=_elementwise_flops, get_memory=_elementwise_memory))
+register_operator("aten.bmm.default", OperatorSpec(get_flops=_bmm_flops, get_memory=_bmm_memory))

@@ -10,15 +10,25 @@ from ai_simulate.custom import has_custom_estimator
 
 
 SUPPORTED_CAPTURE_OPS = {
+    "aten.embedding.default",
     "aten.native_layer_norm.default",
     "aten.addmm.default",
     "aten.gelu.default",
+    "aten.bmm.default",
+    "aten.div.Tensor",
+    "aten._softmax.default",
+    "aten.add.Tensor",
     "custom.fc2.default",
 }
 
 IGNORED_CAPTURE_OPS = {
     "aten.view.default",
     "aten.t.default",
+    "aten.transpose.int",
+    "aten.expand.default",
+    "aten._unsafe_view.default",
+    "aten.detach.default",
+    "aten.clone.default",
 }
 
 
@@ -81,6 +91,9 @@ def _extract_relevant_attrs(op_name: str, args: tuple[Any, ...], kwargs: Dict[st
         normalized_shape = list(args[1]) if len(args) > 1 else []
         eps = args[4] if len(args) > 4 else kwargs.get("eps")
         return {"normalized_shape": normalized_shape, "eps": eps}
+    if op_name == "aten._softmax.default":
+        dim = args[1] if len(args) > 1 else kwargs.get("dim")
+        return {"dim": dim}
     return {}
 
 
@@ -121,8 +134,6 @@ def _localize_builtin_addmm(event: Dict[str, Any], strategy_config: Dict[str, An
     output = event["output_tensors"][0]
 
     if output.shape[-1] >= activations.shape[-1]:
-        if len(weights.shape) != 2:
-            raise ValueError(f"Expected 2D weight tensor for addmm-like op, got shape={weights.shape}")
         local_inputs = [
             TensorMetadata(
                 shape=[bias.shape[0] // tp_degree],
@@ -148,8 +159,6 @@ def _localize_builtin_addmm(event: Dict[str, Any], strategy_config: Dict[str, An
         ]
         tp_mode = "column"
     else:
-        if len(weights.shape) != 2:
-            raise ValueError(f"Expected 2D weight tensor for addmm-like op, got shape={weights.shape}")
         local_inputs = [
             bias,
             TensorMetadata(
@@ -219,7 +228,7 @@ def capture_model_ops(
 ) -> List[OpRecord]:
     with torch.device("meta"):
         meta_model = model.to(device="meta")
-        meta_input = torch.randn(*input_shape, device="meta")
+        meta_input = torch.zeros(*input_shape, dtype=torch.long, device="meta")
     capture_mode = TorchOpCaptureMode()
     with capture_mode:
         meta_model(meta_input)

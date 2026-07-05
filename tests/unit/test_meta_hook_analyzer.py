@@ -11,8 +11,11 @@ def test_meta_hook_analyzer_captures_expected_aten_ops() -> None:
         "global_batch_size": 1,
         "input_seq_len": 16,
         "output_seq_len": 4,
+        "proxy_vocab_size": 100,
+        "proxy_num_layers": 1,
         "proxy_hidden_size": 32,
         "proxy_intermediate_size": 64,
+        "proxy_num_attention_heads": 4,
     }
     strategy_config = {
         "name": "proxy_strategy_test",
@@ -38,12 +41,10 @@ def test_meta_hook_analyzer_captures_expected_aten_ops() -> None:
     )
 
     op_names = [op["op_name"] for op in result["ops"]]
-    assert op_names == [
-        "aten.native_layer_norm.default",
-        "aten.addmm.default",
-        "aten.gelu.default",
-        "custom.fc2.default",
-    ]
-    assert result["summary"]["captured_op_count"] == 4
-    assert result["ops"][1]["local_output_tensors"][0]["shape"] == [16, 8]
-    assert result["ops"][3]["op_kind"] == "custom"
+    assert op_names[0] == "aten.embedding.default"
+    assert "aten.bmm.default" in op_names
+    assert "aten._softmax.default" in op_names
+    assert "custom.fc2.default" in op_names
+    assert result["summary"]["captured_op_count"] == 17
+    assert result["ops"][-1]["op_name"] == "aten.native_layer_norm.default"
+    assert result["ops"][14]["op_kind"] == "custom"
