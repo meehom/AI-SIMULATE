@@ -15,8 +15,12 @@ DEFAULT_DEEPSEEK_V3_PROXY_CONFIG = {
     "hidden_size": 7168,
     "intermediate_size": 18432,
     "num_attention_heads": 56,
-    "activation": "gelu",
+    "activation": "silu",
     "norm_eps": 1e-5,
+    "use_moe": True,
+    "num_experts": 8,
+    "top_k": 2,
+    "expert_intermediate_size": 18432,
 }
 
 
@@ -64,22 +68,86 @@ class DeepSeekV3ProxySelfAttention(nn.Module):
         return self.o_proj(context)
 
 
+class DeepSeekV3ProxyMoEExpert(nn.Module):
+    def __init__(self, hidden_size: int, expert_intermediate_size: int, activation: str = "silu") -> None:
+        super().__init__()
+        self.gate_proj = nn.Linear(hidden_size, expert_intermediate_size)
+        self.up_proj = nn.Linear(hidden_size, expert_intermediate_size)
+        self.activation = DeepSeekV3ProxyDecoderBlock._build_activation(activation)
+        self.down_proj = CustomFC2(expert_intermediate_size, hidden_size)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        gate = self.activation(self.gate_proj(x))
+        up = self.up_proj(x)
+        return self.down_proj(gate * up)
+
+
+class DeepSeekV3ProxyMoEFFN(nn.Module):
+    def __init__(
+        self,
+        hidden_size: int,
+        expert_intermediate_size: int,
+        num_experts: int,
+        top_k: int,
+        activation: str = "silu",
+    ) -> None:
+        super().__init__()
+        if top_k <= 0 or top_k > num_experts:
+            raise ValueError(f"top_k={top_k} must satisfy 0 < top_k <= num_experts={num_experts}")
+        self.num_experts = num_experts
+        self.top_k = top_k
+        self.router = nn.Linear(hidden_size, num_experts)
+        self.experts = nn.ModuleList(
+            [
+                DeepSeekV3ProxyMoEExpert(
+                    hidden_size=hidden_size,
+                    expert_intermediate_size=expert_intermediate_size,
+                    activation=activation,
+                )
+                for _ in range(num_experts)
+            ]
+        )
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        router_logits = self.router(x)
+        router_probs = torch.softmax(router_logits, dim=-1)
+        topk_values, topk_indices = torch.topk(router_probs, self.top_k, dim=-1)
+        gates = torch.zeros_like(router_probs).scatter(-1, topk_indices, topk_values)
+        expert_outputs = torch.stack([expert(x) for expert in self.experts], dim=2)
+        return (expert_outputs * gates.unsqueeze(-1)).sum(dim=2)
+
+
 class DeepSeekV3ProxyDecoderBlock(nn.Module):
     def __init__(
         self,
         hidden_size: int,
         intermediate_size: int,
         num_attention_heads: int,
-        activation: str = "gelu",
+        activation: str = "silu",
         norm_eps: float = 1e-5,
+        use_moe: bool = True,
+        num_experts: int = 8,
+        top_k: int = 2,
+        expert_intermediate_size: int | None = None,
     ) -> None:
         super().__init__()
         self.norm1 = nn.LayerNorm(hidden_size, eps=norm_eps)
         self.attn = DeepSeekV3ProxySelfAttention(hidden_size, num_attention_heads)
         self.norm2 = nn.LayerNorm(hidden_size, eps=norm_eps)
-        self.up_proj = nn.Linear(hidden_size, intermediate_size)
-        self.activation = DeepSeekV3ProxyDecoderBlock._build_activation(activation)
-        self.down_proj = CustomFC2(intermediate_size, hidden_size)
+        if use_moe:
+            self.ffn = DeepSeekV3ProxyMoEFFN(
+                hidden_size=hidden_size,
+                expert_intermediate_size=expert_intermediate_size or intermediate_size,
+                num_experts=num_experts,
+                top_k=top_k,
+                activation=activation,
+            )
+        else:
+            self.ffn = DeepSeekV3ProxyMoEExpert(
+                hidden_size=hidden_size,
+                expert_intermediate_size=intermediate_size,
+                activation=activation,
+            )
 
     @staticmethod
     def _build_activation(name: str) -> nn.Module:
@@ -88,11 +156,13 @@ class DeepSeekV3ProxyDecoderBlock(nn.Module):
             return nn.GELU()
         if activation_name == "relu":
             return nn.ReLU()
+        if activation_name == "silu":
+            return nn.SiLU()
         raise ValueError(f"Unsupported activation for DeepSeek V3 proxy: {name}")
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = x + self.attn(self.norm1(x))
-        x = x + self.down_proj(self.activation(self.up_proj(self.norm2(x))))
+        x = x + self.ffn(self.norm2(x))
         return x
 
 
@@ -104,8 +174,12 @@ class DeepSeekV3ProxyModel(nn.Module):
         hidden_size: int,
         intermediate_size: int,
         num_attention_heads: int,
-        activation: str = "gelu",
+        activation: str = "silu",
         norm_eps: float = 1e-5,
+        use_moe: bool = True,
+        num_experts: int = 8,
+        top_k: int = 2,
+        expert_intermediate_size: int | None = None,
     ) -> None:
         super().__init__()
         self.embedding = nn.Embedding(vocab_size, hidden_size)
@@ -117,6 +191,10 @@ class DeepSeekV3ProxyModel(nn.Module):
                     num_attention_heads=num_attention_heads,
                     activation=activation,
                     norm_eps=norm_eps,
+                    use_moe=use_moe,
+                    num_experts=num_experts,
+                    top_k=top_k,
+                    expert_intermediate_size=expert_intermediate_size,
                 )
                 for _ in range(num_layers)
             ]
@@ -151,6 +229,15 @@ def build_deepseek_v3_proxy(
     )
     activation = str(workload_config.get("proxy_activation", DEFAULT_DEEPSEEK_V3_PROXY_CONFIG["activation"]))
     norm_eps = float(workload_config.get("proxy_norm_eps", DEFAULT_DEEPSEEK_V3_PROXY_CONFIG["norm_eps"]))
+    use_moe = bool(workload_config.get("proxy_use_moe", DEFAULT_DEEPSEEK_V3_PROXY_CONFIG["use_moe"]))
+    num_experts = int(workload_config.get("proxy_num_experts", DEFAULT_DEEPSEEK_V3_PROXY_CONFIG["num_experts"]))
+    top_k = int(workload_config.get("proxy_top_k", DEFAULT_DEEPSEEK_V3_PROXY_CONFIG["top_k"]))
+    expert_intermediate_size = int(
+        workload_config.get(
+            "proxy_expert_intermediate_size",
+            DEFAULT_DEEPSEEK_V3_PROXY_CONFIG["expert_intermediate_size"],
+        )
+    )
 
     batch_size = int(workload_config["global_batch_size"])
     input_seq_len = int(workload_config["input_seq_len"])
@@ -164,6 +251,10 @@ def build_deepseek_v3_proxy(
             num_attention_heads=num_attention_heads,
             activation=activation,
             norm_eps=norm_eps,
+            use_moe=use_moe,
+            num_experts=num_experts,
+            top_k=top_k,
+            expert_intermediate_size=expert_intermediate_size,
         )
 
     input_spec = ProxyInputSpec(

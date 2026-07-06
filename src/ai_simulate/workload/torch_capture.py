@@ -14,10 +14,18 @@ SUPPORTED_CAPTURE_OPS = {
     "aten.native_layer_norm.default",
     "aten.addmm.default",
     "aten.gelu.default",
+    "aten.silu.default",
     "aten.bmm.default",
     "aten.div.Tensor",
     "aten._softmax.default",
     "aten.add.Tensor",
+    "aten.topk.default",
+    "aten.zeros_like.default",
+    "aten.scatter.src",
+    "aten.stack.default",
+    "aten.unsqueeze.default",
+    "aten.mul.Tensor",
+    "aten.sum.dim_IntList",
     "custom.fc2.default",
 }
 
@@ -66,6 +74,10 @@ def _extract_tensor_metadata(values: List[Any]) -> List[TensorMetadata]:
     for value in values:
         if isinstance(value, torch.Tensor):
             tensors.append(_tensor_metadata(value))
+        elif isinstance(value, (list, tuple)):
+            for item in value:
+                if isinstance(item, torch.Tensor):
+                    tensors.append(_tensor_metadata(item))
     return tensors
 
 
@@ -94,6 +106,18 @@ def _extract_relevant_attrs(op_name: str, args: tuple[Any, ...], kwargs: Dict[st
     if op_name == "aten._softmax.default":
         dim = args[1] if len(args) > 1 else kwargs.get("dim")
         return {"dim": dim}
+    if op_name == "aten.topk.default":
+        k = args[1] if len(args) > 1 else kwargs.get("k")
+        return {"k": k}
+    if op_name == "aten.scatter.src":
+        dim = args[1] if len(args) > 1 else kwargs.get("dim")
+        return {"dim": dim}
+    if op_name == "aten.stack.default":
+        dim = args[1] if len(args) > 1 else kwargs.get("dim")
+        return {"dim": dim}
+    if op_name == "aten.sum.dim_IntList":
+        dims = args[1] if len(args) > 1 else kwargs.get("dim")
+        return {"dim": list(dims) if isinstance(dims, (list, tuple)) else dims}
     return {}
 
 

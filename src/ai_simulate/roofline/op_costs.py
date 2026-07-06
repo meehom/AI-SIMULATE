@@ -10,9 +10,12 @@ from ai_simulate.custom import get_custom_estimator
 
 ACTIVATION_FLOP_COST = {
     "aten.gelu.default": 8.0,
+    "aten.silu.default": 8.0,
     "aten.div.Tensor": 1.0,
     "aten._softmax.default": 5.0,
     "aten.add.Tensor": 1.0,
+    "aten.mul.Tensor": 1.0,
+    "aten.unsqueeze.default": 0.0,
 }
 
 
@@ -151,6 +154,71 @@ def _bmm_memory(op_record: OpRecord) -> MemoryStats:
     return MemoryStats(read_bytes=read_bytes, write_bytes=write_bytes)
 
 
+def _topk_flops(op_record: OpRecord) -> float:
+    output = op_record.local_output_tensors[0]
+    return float(output.numel)
+
+
+def _topk_memory(op_record: OpRecord) -> MemoryStats:
+    precision = op_record.precision_context["storage_precision"]
+    input_tensor = op_record.local_input_tensors[0]
+    output_numel = sum(tensor.numel for tensor in op_record.local_output_tensors)
+    read_bytes = _tensor_bytes(input_tensor.numel, precision)
+    write_bytes = _tensor_bytes(output_numel, precision)
+    return MemoryStats(read_bytes=read_bytes, write_bytes=write_bytes)
+
+
+def _zeros_like_flops(op_record: OpRecord) -> float:
+    return 0.0
+
+
+def _zeros_like_memory(op_record: OpRecord) -> MemoryStats:
+    precision = op_record.precision_context["storage_precision"]
+    output = op_record.local_output_tensors[0]
+    return MemoryStats(read_bytes=0, write_bytes=_tensor_bytes(output.numel, precision))
+
+
+def _scatter_flops(op_record: OpRecord) -> float:
+    output = op_record.local_output_tensors[0]
+    return float(output.numel)
+
+
+def _scatter_memory(op_record: OpRecord) -> MemoryStats:
+    precision = op_record.precision_context["storage_precision"]
+    total_input_numel = sum(tensor.numel for tensor in op_record.local_input_tensors)
+    output = op_record.local_output_tensors[0]
+    read_bytes = _tensor_bytes(total_input_numel, precision)
+    write_bytes = _tensor_bytes(output.numel, precision)
+    return MemoryStats(read_bytes=read_bytes, write_bytes=write_bytes)
+
+
+def _stack_flops(op_record: OpRecord) -> float:
+    return 0.0
+
+
+def _stack_memory(op_record: OpRecord) -> MemoryStats:
+    precision = op_record.precision_context["storage_precision"]
+    total_input_numel = sum(tensor.numel for tensor in op_record.local_input_tensors)
+    output = op_record.local_output_tensors[0]
+    read_bytes = _tensor_bytes(total_input_numel, precision)
+    write_bytes = _tensor_bytes(output.numel, precision)
+    return MemoryStats(read_bytes=read_bytes, write_bytes=write_bytes)
+
+
+def _sum_flops(op_record: OpRecord) -> float:
+    output = op_record.local_output_tensors[0]
+    return float(output.numel)
+
+
+def _sum_memory(op_record: OpRecord) -> MemoryStats:
+    precision = op_record.precision_context["storage_precision"]
+    input_tensor = op_record.local_input_tensors[0]
+    output = op_record.local_output_tensors[0]
+    read_bytes = _tensor_bytes(input_tensor.numel, precision)
+    write_bytes = _tensor_bytes(output.numel, precision)
+    return MemoryStats(read_bytes=read_bytes, write_bytes=write_bytes)
+
+
 register_operator("aten.embedding.default", OperatorSpec(get_flops=_embedding_flops, get_memory=_embedding_memory))
 register_operator("aten.addmm.default", OperatorSpec(get_flops=_addmm_flops, get_memory=_addmm_memory))
 register_operator(
@@ -158,7 +226,15 @@ register_operator(
     OperatorSpec(get_flops=_layer_norm_flops, get_memory=_layer_norm_memory),
 )
 register_operator("aten.gelu.default", OperatorSpec(get_flops=_elementwise_flops, get_memory=_elementwise_memory))
+register_operator("aten.silu.default", OperatorSpec(get_flops=_elementwise_flops, get_memory=_elementwise_memory))
 register_operator("aten.div.Tensor", OperatorSpec(get_flops=_elementwise_flops, get_memory=_elementwise_memory))
 register_operator("aten._softmax.default", OperatorSpec(get_flops=_elementwise_flops, get_memory=_elementwise_memory))
 register_operator("aten.add.Tensor", OperatorSpec(get_flops=_elementwise_flops, get_memory=_elementwise_memory))
+register_operator("aten.mul.Tensor", OperatorSpec(get_flops=_elementwise_flops, get_memory=_elementwise_memory))
+register_operator("aten.unsqueeze.default", OperatorSpec(get_flops=_elementwise_flops, get_memory=_elementwise_memory))
 register_operator("aten.bmm.default", OperatorSpec(get_flops=_bmm_flops, get_memory=_bmm_memory))
+register_operator("aten.topk.default", OperatorSpec(get_flops=_topk_flops, get_memory=_topk_memory))
+register_operator("aten.zeros_like.default", OperatorSpec(get_flops=_zeros_like_flops, get_memory=_zeros_like_memory))
+register_operator("aten.scatter.src", OperatorSpec(get_flops=_scatter_flops, get_memory=_scatter_memory))
+register_operator("aten.stack.default", OperatorSpec(get_flops=_stack_flops, get_memory=_stack_memory))
+register_operator("aten.sum.dim_IntList", OperatorSpec(get_flops=_sum_flops, get_memory=_sum_memory))

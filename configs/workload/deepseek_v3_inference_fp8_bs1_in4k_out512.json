@@ -11,6 +11,10 @@
   "proxy_hidden_size": 7168,
   "proxy_intermediate_size": 18432,
   "proxy_num_attention_heads": 56,
-  "proxy_activation": "gelu",
-  "proxy_norm_eps": 1e-5
+  "proxy_activation": "silu",
+  "proxy_norm_eps": 1e-5,
+  "proxy_use_moe": true,
+  "proxy_num_experts": 8,
+  "proxy_top_k": 2,
+  "proxy_expert_intermediate_size": 18432
 }

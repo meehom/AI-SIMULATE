@@ -15,6 +15,10 @@ def test_torch_capture_records_expected_supported_ops() -> None:
         "proxy_hidden_size": 32,
         "proxy_intermediate_size": 64,
         "proxy_num_attention_heads": 4,
+        "proxy_use_moe": True,
+        "proxy_num_experts": 4,
+        "proxy_top_k": 2,
+        "proxy_expert_intermediate_size": 64,
     }
     strategy_config = {
         "name": "proxy_strategy_test",
@@ -28,26 +32,19 @@ def test_torch_capture_records_expected_supported_ops() -> None:
     records = capture_model_ops(model, input_spec.shape, workload_config["precision"], strategy_config)
 
     op_names = [record.op_name for record in records]
-    assert op_names == [
-        "aten.embedding.default",
-        "aten.native_layer_norm.default",
-        "aten.addmm.default",
-        "aten.addmm.default",
-        "aten.addmm.default",
-        "aten.bmm.default",
-        "aten.div.Tensor",
-        "aten._softmax.default",
-        "aten.bmm.default",
-        "aten.addmm.default",
-        "aten.add.Tensor",
-        "aten.native_layer_norm.default",
-        "aten.addmm.default",
-        "aten.gelu.default",
-        "custom.fc2.default",
-        "aten.add.Tensor",
-        "aten.native_layer_norm.default",
-    ]
+    assert op_names[0] == "aten.embedding.default"
+    assert op_names.count("aten.addmm.default") == 13
+    assert op_names.count("aten.bmm.default") == 2
+    assert op_names.count("aten._softmax.default") == 2
+    assert op_names.count("aten.silu.default") == 4
+    assert op_names.count("aten.mul.Tensor") == 5
+    assert "aten.topk.default" in op_names
+    assert "aten.zeros_like.default" in op_names
+    assert "aten.scatter.src" in op_names
+    assert "aten.stack.default" in op_names
+    assert "aten.unsqueeze.default" in op_names
+    assert "aten.sum.dim_IntList" in op_names
+    assert op_names.count("custom.fc2.default") == 4
+    assert op_names[-1] == "aten.native_layer_norm.default"
     assert records[0].output_tensors[0].shape == [1, 16, 32]
-    assert records[0].op_kind == "builtin"
-    assert records[14].op_kind == "custom"
-    assert records[15].op_name == "aten.add.Tensor"
+    assert any(record.op_kind == "custom" for record in records)
