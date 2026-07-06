@@ -16,5 +16,10 @@
   "proxy_use_moe": true,
   "proxy_num_experts": 8,
   "proxy_top_k": 2,
-  "proxy_expert_intermediate_size": 18432
+  "proxy_expert_intermediate_size": 18432,
+  "proxy_attention_impl": "mla",
+  "proxy_mla_kv_lora_rank": 512,
+  "proxy_mla_qk_nope_head_dim": 64,
+  "proxy_mla_qk_rope_head_dim": 64,
+  "proxy_mla_v_head_dim": 128
 }

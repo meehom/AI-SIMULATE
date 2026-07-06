@@ -19,6 +19,11 @@ def test_torch_capture_records_expected_supported_ops() -> None:
         "proxy_num_experts": 4,
         "proxy_top_k": 2,
         "proxy_expert_intermediate_size": 64,
+        "proxy_attention_impl": "mla",
+        "proxy_mla_kv_lora_rank": 8,
+        "proxy_mla_qk_nope_head_dim": 4,
+        "proxy_mla_qk_rope_head_dim": 4,
+        "proxy_mla_v_head_dim": 8,
     }
     strategy_config = {
         "name": "proxy_strategy_test",
@@ -33,9 +38,10 @@ def test_torch_capture_records_expected_supported_ops() -> None:
 
     op_names = [record.op_name for record in records]
     assert op_names[0] == "aten.embedding.default"
-    assert op_names.count("aten.addmm.default") == 13
-    assert op_names.count("aten.bmm.default") == 2
+    assert op_names.count("aten.addmm.default") == 16
+    assert op_names.count("aten.bmm.default") == 3
     assert op_names.count("aten._softmax.default") == 2
+    assert op_names.count("aten.add.Tensor") == 3
     assert op_names.count("aten.silu.default") == 4
     assert op_names.count("aten.mul.Tensor") == 5
     assert "aten.topk.default" in op_names

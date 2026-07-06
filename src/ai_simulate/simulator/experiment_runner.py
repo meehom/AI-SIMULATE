@@ -50,7 +50,7 @@ def _build_result_payload(
         "strategy_config": resolved_experiment.strategy_config,
         "analysis": {
             **analysis_result,
-            "model_proxy_type": "deepseek_v3_2layer_mlp",
+            "model_proxy_type": "deepseek_v3_mla_moe_proxy",
             "proxy_input_spec": {
                 "shape": proxy_input_spec.shape,
                 "hidden_size": proxy_input_spec.hidden_size,

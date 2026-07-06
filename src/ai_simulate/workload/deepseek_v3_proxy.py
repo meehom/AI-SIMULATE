@@ -21,6 +21,11 @@ DEFAULT_DEEPSEEK_V3_PROXY_CONFIG = {
     "num_experts": 8,
     "top_k": 2,
     "expert_intermediate_size": 18432,
+    "attention_impl": "mla",
+    "mla_kv_lora_rank": 512,
+    "mla_qk_nope_head_dim": 64,
+    "mla_qk_rope_head_dim": 64,
+    "mla_v_head_dim": 128,
 }
 
 
@@ -36,35 +41,59 @@ class ProxyInputSpec:
     analysis_phase: str
 
 
-class DeepSeekV3ProxySelfAttention(nn.Module):
-    def __init__(self, hidden_size: int, num_attention_heads: int) -> None:
+class DeepSeekV3ProxyMLAAttention(nn.Module):
+    def __init__(
+        self,
+        hidden_size: int,
+        num_attention_heads: int,
+        kv_lora_rank: int,
+        qk_nope_head_dim: int,
+        qk_rope_head_dim: int,
+        v_head_dim: int,
+    ) -> None:
         super().__init__()
-        if hidden_size % num_attention_heads != 0:
-            raise ValueError(
-                f"hidden_size={hidden_size} must be divisible by num_attention_heads={num_attention_heads}"
-            )
         self.hidden_size = hidden_size
         self.num_attention_heads = num_attention_heads
-        self.head_dim = hidden_size // num_attention_heads
-        self.q_proj = nn.Linear(hidden_size, hidden_size)
-        self.k_proj = nn.Linear(hidden_size, hidden_size)
-        self.v_proj = nn.Linear(hidden_size, hidden_size)
-        self.o_proj = nn.Linear(hidden_size, hidden_size)
+        self.kv_lora_rank = kv_lora_rank
+        self.qk_nope_head_dim = qk_nope_head_dim
+        self.qk_rope_head_dim = qk_rope_head_dim
+        self.v_head_dim = v_head_dim
+        self.q_nope_proj = nn.Linear(hidden_size, num_attention_heads * qk_nope_head_dim)
+        self.q_rope_proj = nn.Linear(hidden_size, num_attention_heads * qk_rope_head_dim)
+        self.kv_latent_proj = nn.Linear(hidden_size, kv_lora_rank)
+        self.k_nope_proj = nn.Linear(kv_lora_rank, num_attention_heads * qk_nope_head_dim)
+        self.v_proj = nn.Linear(kv_lora_rank, num_attention_heads * v_head_dim)
+        self.k_rope_proj = nn.Linear(hidden_size, qk_rope_head_dim)
+        self.o_proj = nn.Linear(num_attention_heads * v_head_dim, hidden_size)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        q = self.q_proj(x)
-        k = self.k_proj(x)
-        v = self.v_proj(x)
+        batch_size, seq_len, _ = x.shape
+        q_nope = self.q_nope_proj(x).view(
+            batch_size, seq_len, self.num_attention_heads, self.qk_nope_head_dim
+        ).transpose(1, 2)
+        q_rope = self.q_rope_proj(x).view(
+            batch_size, seq_len, self.num_attention_heads, self.qk_rope_head_dim
+        ).transpose(1, 2)
 
-        batch_size, seq_len, hidden_size = q.shape
-        q = q.view(batch_size, seq_len, self.num_attention_heads, self.head_dim).transpose(1, 2)
-        k = k.view(batch_size, seq_len, self.num_attention_heads, self.head_dim).transpose(1, 2)
-        v = v.view(batch_size, seq_len, self.num_attention_heads, self.head_dim).transpose(1, 2)
+        kv_latent = self.kv_latent_proj(x)
+        k_nope = self.k_nope_proj(kv_latent).view(
+            batch_size, seq_len, self.num_attention_heads, self.qk_nope_head_dim
+        ).transpose(1, 2)
+        v = self.v_proj(kv_latent).view(
+            batch_size, seq_len, self.num_attention_heads, self.v_head_dim
+        ).transpose(1, 2)
 
-        scores = torch.matmul(q, k.transpose(-1, -2)) / (self.head_dim ** 0.5)
+        k_rope = self.k_rope_proj(x).view(batch_size, seq_len, 1, self.qk_rope_head_dim).transpose(1, 2)
+        k_rope = k_rope.expand(batch_size, self.num_attention_heads, seq_len, self.qk_rope_head_dim)
+
+        scores_nope = torch.matmul(q_nope, k_nope.transpose(-1, -2))
+        scores_rope = torch.matmul(q_rope, k_rope.transpose(-1, -2))
+        scores = (scores_nope + scores_rope) / ((self.qk_nope_head_dim + self.qk_rope_head_dim) ** 0.5)
         probs = torch.softmax(scores, dim=-1)
         context = torch.matmul(probs, v)
-        context = context.transpose(1, 2).contiguous().view(batch_size, seq_len, hidden_size)
+        context = context.transpose(1, 2).contiguous().view(
+            batch_size, seq_len, self.num_attention_heads * self.v_head_dim
+        )
         return self.o_proj(context)
 
 
@@ -129,10 +158,25 @@ class DeepSeekV3ProxyDecoderBlock(nn.Module):
         num_experts: int = 8,
         top_k: int = 2,
         expert_intermediate_size: int | None = None,
+        attention_impl: str = "mla",
+        mla_kv_lora_rank: int = 512,
+        mla_qk_nope_head_dim: int = 64,
+        mla_qk_rope_head_dim: int = 64,
+        mla_v_head_dim: int = 128,
     ) -> None:
         super().__init__()
         self.norm1 = nn.LayerNorm(hidden_size, eps=norm_eps)
-        self.attn = DeepSeekV3ProxySelfAttention(hidden_size, num_attention_heads)
+        if attention_impl == "mla":
+            self.attn = DeepSeekV3ProxyMLAAttention(
+                hidden_size=hidden_size,
+                num_attention_heads=num_attention_heads,
+                kv_lora_rank=mla_kv_lora_rank,
+                qk_nope_head_dim=mla_qk_nope_head_dim,
+                qk_rope_head_dim=mla_qk_rope_head_dim,
+                v_head_dim=mla_v_head_dim,
+            )
+        else:
+            raise ValueError(f"Unsupported attention implementation for DeepSeek V3 proxy: {attention_impl}")
         self.norm2 = nn.LayerNorm(hidden_size, eps=norm_eps)
         if use_moe:
             self.ffn = DeepSeekV3ProxyMoEFFN(
@@ -180,6 +224,11 @@ class DeepSeekV3ProxyModel(nn.Module):
         num_experts: int = 8,
         top_k: int = 2,
         expert_intermediate_size: int | None = None,
+        attention_impl: str = "mla",
+        mla_kv_lora_rank: int = 512,
+        mla_qk_nope_head_dim: int = 64,
+        mla_qk_rope_head_dim: int = 64,
+        mla_v_head_dim: int = 128,
     ) -> None:
         super().__init__()
         self.embedding = nn.Embedding(vocab_size, hidden_size)
@@ -195,6 +244,11 @@ class DeepSeekV3ProxyModel(nn.Module):
                     num_experts=num_experts,
                     top_k=top_k,
                     expert_intermediate_size=expert_intermediate_size,
+                    attention_impl=attention_impl,
+                    mla_kv_lora_rank=mla_kv_lora_rank,
+                    mla_qk_nope_head_dim=mla_qk_nope_head_dim,
+                    mla_qk_rope_head_dim=mla_qk_rope_head_dim,
+                    mla_v_head_dim=mla_v_head_dim,
                 )
                 for _ in range(num_layers)
             ]
@@ -238,6 +292,33 @@ def build_deepseek_v3_proxy(
             DEFAULT_DEEPSEEK_V3_PROXY_CONFIG["expert_intermediate_size"],
         )
     )
+    attention_impl = str(
+        workload_config.get("proxy_attention_impl", DEFAULT_DEEPSEEK_V3_PROXY_CONFIG["attention_impl"])
+    )
+    mla_kv_lora_rank = int(
+        workload_config.get(
+            "proxy_mla_kv_lora_rank",
+            DEFAULT_DEEPSEEK_V3_PROXY_CONFIG["mla_kv_lora_rank"],
+        )
+    )
+    mla_qk_nope_head_dim = int(
+        workload_config.get(
+            "proxy_mla_qk_nope_head_dim",
+            DEFAULT_DEEPSEEK_V3_PROXY_CONFIG["mla_qk_nope_head_dim"],
+        )
+    )
+    mla_qk_rope_head_dim = int(
+        workload_config.get(
+            "proxy_mla_qk_rope_head_dim",
+            DEFAULT_DEEPSEEK_V3_PROXY_CONFIG["mla_qk_rope_head_dim"],
+        )
+    )
+    mla_v_head_dim = int(
+        workload_config.get(
+            "proxy_mla_v_head_dim",
+            DEFAULT_DEEPSEEK_V3_PROXY_CONFIG["mla_v_head_dim"],
+        )
+    )
 
     batch_size = int(workload_config["global_batch_size"])
     input_seq_len = int(workload_config["input_seq_len"])
@@ -255,6 +336,11 @@ def build_deepseek_v3_proxy(
             num_experts=num_experts,
             top_k=top_k,
             expert_intermediate_size=expert_intermediate_size,
+            attention_impl=attention_impl,
+            mla_kv_lora_rank=mla_kv_lora_rank,
+            mla_qk_nope_head_dim=mla_qk_nope_head_dim,
+            mla_qk_rope_head_dim=mla_qk_rope_head_dim,
+            mla_v_head_dim=mla_v_head_dim,
         )
 
     input_spec = ProxyInputSpec(

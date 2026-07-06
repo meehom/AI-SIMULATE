@@ -132,30 +132,30 @@
       "pid": 1,
       "tid": 0,
       "ts": 102.76633600000001,
-      "dur": 42.0906795008,
+      "dur": 2.6956160000000002,
       "args": {
         "op_index": 2,
         "op_kind": "builtin",
-        "predicted_time_s": 4.20906795008e-05,
-        "compute_time_s": 4.20906795008e-05,
-        "memory_time_s": 4.931696e-06,
-        "bottleneck": "compute_bound",
-        "flops": 420906795008.0,
-        "memory_bytes_total": 39453568,
-        "arithmetic_intensity": 10668.408875161811,
+        "predicted_time_s": 2.695616e-06,
+        "compute_time_s": 6.576668672e-07,
+        "memory_time_s": 2.695616e-06,
+        "bottleneck": "memory_bound",
+        "flops": 6576668672.0,
+        "memory_bytes_total": 21564928,
+        "arithmetic_intensity": 304.970583347183,
         "input_shape": [
-          7168
+          3584
         ],
         "output_shape": [
           4096,
-          7168
+          3584
         ],
         "local_input_shape": [
-          896
+          3584
         ],
         "local_output_shape": [
           4096,
-          896
+          3584
         ],
         "precision_context": {
           "storage_precision": "fp8",
@@ -166,7 +166,7 @@
           "tp_degree": 8,
           "pp_degree": 9,
           "dp_degree": 1,
-          "tp_mode": "column"
+          "tp_mode": "row"
         },
         "attrs": {}
       }
@@ -177,18 +177,156 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 144.8570155008,
-      "dur": 42.0906795008,
+      "ts": 105.46195200000001,
+      "dur": 2.6956160000000002,
       "args": {
         "op_index": 3,
         "op_kind": "builtin",
-        "predicted_time_s": 4.20906795008e-05,
-        "compute_time_s": 4.20906795008e-05,
-        "memory_time_s": 4.931696e-06,
-        "bottleneck": "compute_bound",
-        "flops": 420906795008.0,
-        "memory_bytes_total": 39453568,
-        "arithmetic_intensity": 10668.408875161811,
+        "predicted_time_s": 2.695616e-06,
+        "compute_time_s": 6.576668672e-07,
+        "memory_time_s": 2.695616e-06,
+        "bottleneck": "memory_bound",
+        "flops": 6576668672.0,
+        "memory_bytes_total": 21564928,
+        "arithmetic_intensity": 304.970583347183,
+        "input_shape": [
+          3584
+        ],
+        "output_shape": [
+          4096,
+          3584
+        ],
+        "local_input_shape": [
+          3584
+        ],
+        "local_output_shape": [
+          4096,
+          3584
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "row"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.addmm.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 108.15756800000001,
+      "dur": 0.778304,
+      "args": {
+        "op_index": 4,
+        "op_kind": "builtin",
+        "predicted_time_s": 7.78304e-07,
+        "compute_time_s": 6.576668672e-07,
+        "memory_time_s": 7.78304e-07,
+        "bottleneck": "memory_bound",
+        "flops": 6576668672.0,
+        "memory_bytes_total": 6226432,
+        "arithmetic_intensity": 1056.24997944248,
+        "input_shape": [
+          512
+        ],
+        "output_shape": [
+          4096,
+          512
+        ],
+        "local_input_shape": [
+          512
+        ],
+        "local_output_shape": [
+          4096,
+          512
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "row"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.addmm.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 108.93587200000002,
+      "dur": 0.5202479999999999,
+      "args": {
+        "op_index": 5,
+        "op_kind": "builtin",
+        "predicted_time_s": 5.20248e-07,
+        "compute_time_s": 2.147483648e-07,
+        "memory_time_s": 5.20248e-07,
+        "bottleneck": "memory_bound",
+        "flops": 2147483648.0,
+        "memory_bytes_total": 4161984,
+        "arithmetic_intensity": 515.9759499315711,
+        "input_shape": [
+          3584
+        ],
+        "output_shape": [
+          4096,
+          3584
+        ],
+        "local_input_shape": [
+          448
+        ],
+        "local_output_shape": [
+          4096,
+          448
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "column"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.addmm.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 109.45612000000001,
+      "dur": 0.7783519999999999,
+      "args": {
+        "op_index": 6,
+        "op_kind": "builtin",
+        "predicted_time_s": 7.78352e-07,
+        "compute_time_s": 2.147483648e-07,
+        "memory_time_s": 7.78352e-07,
+        "bottleneck": "memory_bound",
+        "flops": 2147483648.0,
+        "memory_bytes_total": 6226816,
+        "arithmetic_intensity": 344.8766830431476,
         "input_shape": [
           7168
         ],
@@ -223,31 +361,31 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 186.9476950016,
-      "dur": 42.0906795008,
+      "ts": 110.23447200000001,
+      "dur": 0.6576668672,
       "args": {
-        "op_index": 4,
+        "op_index": 7,
         "op_kind": "builtin",
-        "predicted_time_s": 4.20906795008e-05,
-        "compute_time_s": 4.20906795008e-05,
-        "memory_time_s": 4.931696e-06,
+        "predicted_time_s": 6.576668672e-07,
+        "compute_time_s": 6.576668672e-07,
+        "memory_time_s": 4.98696e-07,
         "bottleneck": "compute_bound",
-        "flops": 420906795008.0,
-        "memory_bytes_total": 39453568,
-        "arithmetic_intensity": 10668.408875161811,
+        "flops": 6576668672.0,
+        "memory_bytes_total": 3989568,
+        "arithmetic_intensity": 1648.4663682884964,
         "input_shape": [
-          7168
+          64
         ],
         "output_shape": [
           4096,
-          7168
+          64
         ],
         "local_input_shape": [
-          896
+          64
         ],
         "local_output_shape": [
           4096,
-          896
+          64
         ],
         "precision_context": {
           "storage_precision": "fp8",
@@ -258,7 +396,7 @@
           "tp_degree": 8,
           "pp_degree": 9,
           "dp_degree": 1,
-          "tp_mode": "column"
+          "tp_mode": "row"
         },
         "attrs": {}
       }
@@ -269,22 +407,22 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 229.03837450240002,
-      "dur": 124.780544,
+      "ts": 110.89213886720002,
+      "dur": 121.110528,
       "args": {
-        "op_index": 5,
+        "op_index": 8,
         "op_kind": "builtin",
-        "predicted_time_s": 0.000124780544,
-        "compute_time_s": 2.40518168576e-05,
-        "memory_time_s": 0.000124780544,
+        "predicted_time_s": 0.000121110528,
+        "compute_time_s": 1.20259084288e-05,
+        "memory_time_s": 0.000121110528,
         "bottleneck": "memory_bound",
-        "flops": 240518168576.0,
-        "memory_bytes_total": 998244352,
-        "arithmetic_intensity": 240.94117647058823,
+        "flops": 120259084288.0,
+        "memory_bytes_total": 968884224,
+        "arithmetic_intensity": 124.12121212121212,
         "input_shape": [
           56,
           4096,
-          128
+          64
         ],
         "output_shape": [
           56,
@@ -294,9 +432,117 @@
         "local_input_shape": [
           56,
           4096,
-          128
+          64
         ],
         "local_output_shape": [
+          56,
+          4096,
+          4096
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.bmm.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 232.00266686720002,
+      "dur": 121.110528,
+      "args": {
+        "op_index": 9,
+        "op_kind": "builtin",
+        "predicted_time_s": 0.000121110528,
+        "compute_time_s": 1.20259084288e-05,
+        "memory_time_s": 0.000121110528,
+        "bottleneck": "memory_bound",
+        "flops": 120259084288.0,
+        "memory_bytes_total": 968884224,
+        "arithmetic_intensity": 124.12121212121212,
+        "input_shape": [
+          56,
+          4096,
+          64
+        ],
+        "output_shape": [
+          56,
+          4096,
+          4096
+        ],
+        "local_input_shape": [
+          56,
+          4096,
+          64
+        ],
+        "local_output_shape": [
+          56,
+          4096,
+          4096
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.add.Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 353.11319486720004,
+      "dur": 352.321536,
+      "args": {
+        "op_index": 10,
+        "op_kind": "builtin",
+        "predicted_time_s": 0.000352321536,
+        "compute_time_s": 9.39524096e-08,
+        "memory_time_s": 0.000352321536,
+        "bottleneck": "memory_bound",
+        "flops": 939524096.0,
+        "memory_bytes_total": 2818572288,
+        "arithmetic_intensity": 0.3333333333333333,
+        "input_shape": [
+          1,
+          56,
+          4096,
+          4096
+        ],
+        "output_shape": [
+          1,
+          56,
+          4096,
+          4096
+        ],
+        "local_input_shape": [
+          1,
+          56,
+          4096,
+          4096
+        ],
+        "local_output_shape": [
+          1,
           56,
           4096,
           4096
@@ -321,10 +567,10 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 353.81891850240004,
+      "ts": 705.4347308672,
       "dur": 234.881024,
       "args": {
-        "op_index": 6,
+        "op_index": 11,
         "op_kind": "builtin",
         "predicted_time_s": 0.000234881024,
         "compute_time_s": 9.39524096e-08,
@@ -377,10 +623,10 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 588.6999425024001,
+      "ts": 940.3157548672,
       "dur": 234.881024,
       "args": {
-        "op_index": 7,
+        "op_index": 12,
         "op_kind": "builtin",
         "predicted_time_s": 0.000234881024,
         "compute_time_s": 4.69762048e-07,
@@ -435,10 +681,10 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 823.5809665024001,
+      "ts": 1175.1967788672,
       "dur": 124.780544,
       "args": {
-        "op_index": 8,
+        "op_index": 13,
         "op_kind": "builtin",
         "predicted_time_s": 0.000124780544,
         "compute_time_s": 2.40518168576e-05,
@@ -487,10 +733,10 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 948.3615105024,
+      "ts": 1299.9773228672,
       "dur": 42.0906795008,
       "args": {
-        "op_index": 9,
+        "op_index": 14,
         "op_kind": "builtin",
         "predicted_time_s": 4.20906795008e-05,
         "compute_time_s": 4.20906795008e-05,
@@ -533,10 +779,10 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 990.4521900032,
+      "ts": 1342.068002368,
       "dur": 11.010048,
       "args": {
-        "op_index": 10,
+        "op_index": 15,
         "op_kind": "builtin",
         "predicted_time_s": 1.1010048e-05,
         "compute_time_s": 2.9360128e-09,
@@ -585,10 +831,10 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1001.4622380032,
+      "ts": 1353.078050368,
       "dur": 7.341824000000001,
       "args": {
-        "op_index": 11,
+        "op_index": 16,
         "op_kind": "builtin",
         "predicted_time_s": 7.341824e-06,
         "compute_time_s": 2.05520896e-08,
@@ -642,10 +888,10 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1008.8040620032,
+      "ts": 1360.4198743680001,
       "dur": 0.6576668672,
       "args": {
-        "op_index": 12,
+        "op_index": 17,
         "op_kind": "builtin",
         "predicted_time_s": 6.576668672e-07,
         "compute_time_s": 6.576668672e-07,
@@ -688,10 +934,10 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1009.4617288704,
+      "ts": 1361.0775412352002,
       "dur": 0.008192,
       "args": {
-        "op_index": 13,
+        "op_index": 18,
         "op_kind": "builtin",
         "predicted_time_s": 8.192e-09,
         "compute_time_s": 1.6384e-11,
@@ -742,10 +988,10 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1009.4699208704,
+      "ts": 1361.0857332352002,
       "dur": 0.006144,
       "args": {
-        "op_index": 14,
+        "op_index": 19,
         "op_kind": "builtin",
         "predicted_time_s": 6.144e-09,
         "compute_time_s": 8.192e-13,
@@ -796,10 +1042,10 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1009.4760648703999,
+      "ts": 1361.0918772352002,
       "dur": 0.004096,
       "args": {
-        "op_index": 15,
+        "op_index": 20,
         "op_kind": "builtin",
         "predicted_time_s": 4.096e-09,
         "compute_time_s": 0.0,
@@ -848,10 +1094,10 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1009.4801608703999,
+      "ts": 1361.0959732352,
       "dur": 0.010239999999999999,
       "args": {
-        "op_index": 16,
+        "op_index": 21,
         "op_kind": "builtin",
         "predicted_time_s": 1.024e-08,
         "compute_time_s": 3.2768e-12,
@@ -902,255 +1148,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1009.4904008703999,
-      "dur": 42.0906795008,
-      "args": {
-        "op_index": 17,
-        "op_kind": "builtin",
-        "predicted_time_s": 4.20906795008e-05,
-        "compute_time_s": 4.20906795008e-05,
-        "memory_time_s": 6.914336e-06,
-        "bottleneck": "compute_bound",
-        "flops": 420906795008.0,
-        "memory_bytes_total": 55314688,
-        "arithmetic_intensity": 7609.313370944079,
-        "input_shape": [
-          18432
-        ],
-        "output_shape": [
-          4096,
-          18432
-        ],
-        "local_input_shape": [
-          2304
-        ],
-        "local_output_shape": [
-          4096,
-          2304
-        ],
-        "precision_context": {
-          "storage_precision": "fp8",
-          "compute_precision": "fp8",
-          "accum_precision": "fp16"
-        },
-        "parallelism": {
-          "tp_degree": 8,
-          "pp_degree": 9,
-          "dp_degree": 1,
-          "tp_mode": "column"
-        },
-        "attrs": {}
-      }
-    },
-    {
-      "name": "aten.silu.default",
-      "cat": "operator",
-      "ph": "X",
-      "pid": 1,
-      "tid": 0,
-      "ts": 1051.5810803712,
-      "dur": 18.874368,
-      "args": {
-        "op_index": 18,
-        "op_kind": "builtin",
-        "predicted_time_s": 1.8874368e-05,
-        "compute_time_s": 6.03979776e-08,
-        "memory_time_s": 1.8874368e-05,
-        "bottleneck": "memory_bound",
-        "flops": 603979776.0,
-        "memory_bytes_total": 150994944,
-        "arithmetic_intensity": 4.0,
-        "input_shape": [
-          1,
-          4096,
-          18432
-        ],
-        "output_shape": [
-          1,
-          4096,
-          18432
-        ],
-        "local_input_shape": [
-          1,
-          4096,
-          18432
-        ],
-        "local_output_shape": [
-          1,
-          4096,
-          18432
-        ],
-        "precision_context": {
-          "storage_precision": "fp8",
-          "compute_precision": "fp8",
-          "accum_precision": "fp16"
-        },
-        "parallelism": {
-          "tp_degree": 8,
-          "pp_degree": 9,
-          "dp_degree": 1,
-          "tp_mode": "replicated"
-        },
-        "attrs": {}
-      }
-    },
-    {
-      "name": "aten.addmm.default",
-      "cat": "operator",
-      "ph": "X",
-      "pid": 1,
-      "tid": 0,
-      "ts": 1070.4554483712,
-      "dur": 42.0906795008,
-      "args": {
-        "op_index": 19,
-        "op_kind": "builtin",
-        "predicted_time_s": 4.20906795008e-05,
-        "compute_time_s": 4.20906795008e-05,
-        "memory_time_s": 6.914336e-06,
-        "bottleneck": "compute_bound",
-        "flops": 420906795008.0,
-        "memory_bytes_total": 55314688,
-        "arithmetic_intensity": 7609.313370944079,
-        "input_shape": [
-          18432
-        ],
-        "output_shape": [
-          4096,
-          18432
-        ],
-        "local_input_shape": [
-          2304
-        ],
-        "local_output_shape": [
-          4096,
-          2304
-        ],
-        "precision_context": {
-          "storage_precision": "fp8",
-          "compute_precision": "fp8",
-          "accum_precision": "fp16"
-        },
-        "parallelism": {
-          "tp_degree": 8,
-          "pp_degree": 9,
-          "dp_degree": 1,
-          "tp_mode": "column"
-        },
-        "attrs": {}
-      }
-    },
-    {
-      "name": "aten.mul.Tensor",
-      "cat": "operator",
-      "ph": "X",
-      "pid": 1,
-      "tid": 0,
-      "ts": 1112.546127872,
-      "dur": 28.311552,
-      "args": {
-        "op_index": 20,
-        "op_kind": "builtin",
-        "predicted_time_s": 2.8311552e-05,
-        "compute_time_s": 7.5497472e-09,
-        "memory_time_s": 2.8311552e-05,
-        "bottleneck": "memory_bound",
-        "flops": 75497472.0,
-        "memory_bytes_total": 226492416,
-        "arithmetic_intensity": 0.3333333333333333,
-        "input_shape": [
-          1,
-          4096,
-          18432
-        ],
-        "output_shape": [
-          1,
-          4096,
-          18432
-        ],
-        "local_input_shape": [
-          1,
-          4096,
-          18432
-        ],
-        "local_output_shape": [
-          1,
-          4096,
-          18432
-        ],
-        "precision_context": {
-          "storage_precision": "fp8",
-          "compute_precision": "fp8",
-          "accum_precision": "fp16"
-        },
-        "parallelism": {
-          "tp_degree": 8,
-          "pp_degree": 9,
-          "dp_degree": 1,
-          "tp_mode": "replicated"
-        },
-        "attrs": {}
-      }
-    },
-    {
-      "name": "custom.fc2.default",
-      "cat": "operator",
-      "ph": "X",
-      "pid": 1,
-      "tid": 0,
-      "ts": 1140.8576798719998,
-      "dur": 13.5291469824,
-      "args": {
-        "op_index": 21,
-        "op_kind": "custom",
-        "predicted_time_s": 1.35291469824e-05,
-        "compute_time_s": 1.35291469824e-05,
-        "memory_time_s": 6.914944e-06,
-        "bottleneck": "compute_bound",
-        "flops": 135291469824.0,
-        "memory_bytes_total": 55319552,
-        "arithmetic_intensity": 2445.6356736945377,
-        "input_shape": [
-          1,
-          4096,
-          18432
-        ],
-        "output_shape": [
-          1,
-          4096,
-          7168
-        ],
-        "local_input_shape": [
-          1,
-          4096,
-          2304
-        ],
-        "local_output_shape": [
-          1,
-          4096,
-          7168
-        ],
-        "precision_context": {
-          "storage_precision": "fp8",
-          "compute_precision": "fp8",
-          "accum_precision": "fp16"
-        },
-        "parallelism": {
-          "tp_degree": 8,
-          "pp_degree": 9,
-          "dp_degree": 1,
-          "tp_mode": "row"
-        },
-        "attrs": {}
-      }
-    },
-    {
-      "name": "aten.addmm.default",
-      "cat": "operator",
-      "ph": "X",
-      "pid": 1,
-      "tid": 0,
-      "ts": 1154.3868268544,
+      "ts": 1361.1062132352001,
       "dur": 42.0906795008,
       "args": {
         "op_index": 22,
@@ -1196,7 +1194,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1196.4775063552,
+      "ts": 1403.196892736,
       "dur": 18.874368,
       "args": {
         "op_index": 23,
@@ -1248,7 +1246,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1215.3518743552,
+      "ts": 1422.071260736,
       "dur": 42.0906795008,
       "args": {
         "op_index": 24,
@@ -1294,7 +1292,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1257.442553856,
+      "ts": 1464.1619402368,
       "dur": 28.311552,
       "args": {
         "op_index": 25,
@@ -1346,7 +1344,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1285.7541058559998,
+      "ts": 1492.4734922368,
       "dur": 13.5291469824,
       "args": {
         "op_index": 26,
@@ -1398,7 +1396,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1299.2832528384,
+      "ts": 1506.0026392192,
       "dur": 42.0906795008,
       "args": {
         "op_index": 27,
@@ -1444,7 +1442,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1341.3739323391999,
+      "ts": 1548.09331872,
       "dur": 18.874368,
       "args": {
         "op_index": 28,
@@ -1496,7 +1494,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1360.2483003392,
+      "ts": 1566.96768672,
       "dur": 42.0906795008,
       "args": {
         "op_index": 29,
@@ -1542,7 +1540,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1402.3389798399999,
+      "ts": 1609.0583662208,
       "dur": 28.311552,
       "args": {
         "op_index": 30,
@@ -1594,7 +1592,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1430.6505318399998,
+      "ts": 1637.3699182208,
       "dur": 13.5291469824,
       "args": {
         "op_index": 31,
@@ -1646,7 +1644,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1444.1796788223999,
+      "ts": 1650.8990652032,
       "dur": 42.0906795008,
       "args": {
         "op_index": 32,
@@ -1692,7 +1690,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1486.2703583231998,
+      "ts": 1692.989744704,
       "dur": 18.874368,
       "args": {
         "op_index": 33,
@@ -1744,7 +1742,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1505.1447263231998,
+      "ts": 1711.864112704,
       "dur": 42.0906795008,
       "args": {
         "op_index": 34,
@@ -1790,7 +1788,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1547.2354058239998,
+      "ts": 1753.9547922048,
       "dur": 28.311552,
       "args": {
         "op_index": 35,
@@ -1842,7 +1840,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1575.5469578239997,
+      "ts": 1782.2663442048,
       "dur": 13.5291469824,
       "args": {
         "op_index": 36,
@@ -1894,7 +1892,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1589.0761048063998,
+      "ts": 1795.7954911872,
       "dur": 42.0906795008,
       "args": {
         "op_index": 37,
@@ -1940,7 +1938,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1631.1667843071998,
+      "ts": 1837.886170688,
       "dur": 18.874368,
       "args": {
         "op_index": 38,
@@ -1992,7 +1990,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1650.0411523071998,
+      "ts": 1856.760538688,
       "dur": 42.0906795008,
       "args": {
         "op_index": 39,
@@ -2038,7 +2036,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1692.1318318079998,
+      "ts": 1898.8512181888,
       "dur": 28.311552,
       "args": {
         "op_index": 40,
@@ -2090,7 +2088,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1720.4433838079997,
+      "ts": 1927.1627701887999,
       "dur": 13.5291469824,
       "args": {
         "op_index": 41,
@@ -2142,7 +2140,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1733.9725307903998,
+      "ts": 1940.6919171712,
       "dur": 42.0906795008,
       "args": {
         "op_index": 42,
@@ -2188,7 +2186,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1776.0632102911998,
+      "ts": 1982.782596672,
       "dur": 18.874368,
       "args": {
         "op_index": 43,
@@ -2240,7 +2238,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1794.9375782911998,
+      "ts": 2001.656964672,
       "dur": 42.0906795008,
       "args": {
         "op_index": 44,
@@ -2286,7 +2284,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1837.0282577919997,
+      "ts": 2043.7476441728,
       "dur": 28.311552,
       "args": {
         "op_index": 45,
@@ -2338,7 +2336,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1865.3398097919996,
+      "ts": 2072.0591961728,
       "dur": 13.5291469824,
       "args": {
         "op_index": 46,
@@ -2390,7 +2388,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1878.8689567743997,
+      "ts": 2085.5883431552,
       "dur": 42.0906795008,
       "args": {
         "op_index": 47,
@@ -2436,7 +2434,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1920.9596362751997,
+      "ts": 2127.679022656,
       "dur": 18.874368,
       "args": {
         "op_index": 48,
@@ -2488,7 +2486,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1939.8340042751997,
+      "ts": 2146.553390656,
       "dur": 42.0906795008,
       "args": {
         "op_index": 49,
@@ -2534,7 +2532,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 1981.9246837759997,
+      "ts": 2188.6440701568,
       "dur": 28.311552,
       "args": {
         "op_index": 50,
@@ -2586,7 +2584,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 2010.2362357759996,
+      "ts": 2216.9556221568,
       "dur": 13.5291469824,
       "args": {
         "op_index": 51,
@@ -2638,7 +2636,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 2023.7653827583997,
+      "ts": 2230.4847691392,
       "dur": 42.0906795008,
       "args": {
         "op_index": 52,
@@ -2684,7 +2682,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 2065.8560622592,
+      "ts": 2272.57544864,
       "dur": 18.874368,
       "args": {
         "op_index": 53,
@@ -2736,7 +2734,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 2084.7304302591997,
+      "ts": 2291.44981664,
       "dur": 42.0906795008,
       "args": {
         "op_index": 54,
@@ -2782,7 +2780,7 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 2126.8211097599997,
+      "ts": 2333.5404961408,
       "dur": 28.311552,
       "args": {
         "op_index": 55,
@@ -2834,10 +2832,258 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 2155.13266176,
+      "ts": 2361.8520481408,
       "dur": 13.5291469824,
       "args": {
         "op_index": 56,
+        "op_kind": "custom",
+        "predicted_time_s": 1.35291469824e-05,
+        "compute_time_s": 1.35291469824e-05,
+        "memory_time_s": 6.914944e-06,
+        "bottleneck": "compute_bound",
+        "flops": 135291469824.0,
+        "memory_bytes_total": 55319552,
+        "arithmetic_intensity": 2445.6356736945377,
+        "input_shape": [
+          1,
+          4096,
+          18432
+        ],
+        "output_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "local_input_shape": [
+          1,
+          4096,
+          2304
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "row"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.addmm.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 2375.3811951232,
+      "dur": 42.0906795008,
+      "args": {
+        "op_index": 57,
+        "op_kind": "builtin",
+        "predicted_time_s": 4.20906795008e-05,
+        "compute_time_s": 4.20906795008e-05,
+        "memory_time_s": 6.914336e-06,
+        "bottleneck": "compute_bound",
+        "flops": 420906795008.0,
+        "memory_bytes_total": 55314688,
+        "arithmetic_intensity": 7609.313370944079,
+        "input_shape": [
+          18432
+        ],
+        "output_shape": [
+          4096,
+          18432
+        ],
+        "local_input_shape": [
+          2304
+        ],
+        "local_output_shape": [
+          4096,
+          2304
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "column"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.silu.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 2417.471874624,
+      "dur": 18.874368,
+      "args": {
+        "op_index": 58,
+        "op_kind": "builtin",
+        "predicted_time_s": 1.8874368e-05,
+        "compute_time_s": 6.03979776e-08,
+        "memory_time_s": 1.8874368e-05,
+        "bottleneck": "memory_bound",
+        "flops": 603979776.0,
+        "memory_bytes_total": 150994944,
+        "arithmetic_intensity": 4.0,
+        "input_shape": [
+          1,
+          4096,
+          18432
+        ],
+        "output_shape": [
+          1,
+          4096,
+          18432
+        ],
+        "local_input_shape": [
+          1,
+          4096,
+          18432
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          18432
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.addmm.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 2436.346242624,
+      "dur": 42.0906795008,
+      "args": {
+        "op_index": 59,
+        "op_kind": "builtin",
+        "predicted_time_s": 4.20906795008e-05,
+        "compute_time_s": 4.20906795008e-05,
+        "memory_time_s": 6.914336e-06,
+        "bottleneck": "compute_bound",
+        "flops": 420906795008.0,
+        "memory_bytes_total": 55314688,
+        "arithmetic_intensity": 7609.313370944079,
+        "input_shape": [
+          18432
+        ],
+        "output_shape": [
+          4096,
+          18432
+        ],
+        "local_input_shape": [
+          2304
+        ],
+        "local_output_shape": [
+          4096,
+          2304
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "column"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.mul.Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 2478.4369221248,
+      "dur": 28.311552,
+      "args": {
+        "op_index": 60,
+        "op_kind": "builtin",
+        "predicted_time_s": 2.8311552e-05,
+        "compute_time_s": 7.5497472e-09,
+        "memory_time_s": 2.8311552e-05,
+        "bottleneck": "memory_bound",
+        "flops": 75497472.0,
+        "memory_bytes_total": 226492416,
+        "arithmetic_intensity": 0.3333333333333333,
+        "input_shape": [
+          1,
+          4096,
+          18432
+        ],
+        "output_shape": [
+          1,
+          4096,
+          18432
+        ],
+        "local_input_shape": [
+          1,
+          4096,
+          18432
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          18432
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "custom.fc2.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 2506.7484741248,
+      "dur": 13.5291469824,
+      "args": {
+        "op_index": 61,
         "op_kind": "custom",
         "predicted_time_s": 1.35291469824e-05,
         "compute_time_s": 1.35291469824e-05,
@@ -2886,10 +3132,10 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 2168.6618087424,
+      "ts": 2520.2776211072,
       "dur": 58.720256,
       "args": {
-        "op_index": 57,
+        "op_index": 62,
         "op_kind": "builtin",
         "predicted_time_s": 5.8720256e-05,
         "compute_time_s": 0.0,
@@ -2942,10 +3188,10 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 2227.3820647424,
+      "ts": 2578.9978771072,
       "dur": 0.008192,
       "args": {
-        "op_index": 58,
+        "op_index": 63,
         "op_kind": "builtin",
         "predicted_time_s": 8.192e-09,
         "compute_time_s": 0.0,
@@ -2996,10 +3242,10 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 2227.3902567423997,
+      "ts": 2579.0060691072,
       "dur": 58.724351999999996,
       "args": {
-        "op_index": 59,
+        "op_index": 64,
         "op_kind": "builtin",
         "predicted_time_s": 5.8724352e-05,
         "compute_time_s": 2.34881024e-08,
@@ -3052,10 +3298,10 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 2286.1146087424,
+      "ts": 2637.7304211072,
       "dur": 33.030144,
       "args": {
-        "op_index": 60,
+        "op_index": 65,
         "op_kind": "builtin",
         "predicted_time_s": 3.3030144e-05,
         "compute_time_s": 2.9360128e-09,
@@ -3110,10 +3356,10 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 2319.1447527423998,
+      "ts": 2670.7605651072,
       "dur": 11.010048,
       "args": {
-        "op_index": 61,
+        "op_index": 66,
         "op_kind": "builtin",
         "predicted_time_s": 1.1010048e-05,
         "compute_time_s": 2.9360128e-09,
@@ -3162,10 +3408,10 @@
       "ph": "X",
       "pid": 1,
       "tid": 0,
-      "ts": 2330.1548007424,
+      "ts": 2681.7706131072,
       "dur": 7.341824000000001,
       "args": {
-        "op_index": 62,
+        "op_index": 67,
         "op_kind": "builtin",
         "predicted_time_s": 7.341824e-06,
         "compute_time_s": 2.05520896e-08,

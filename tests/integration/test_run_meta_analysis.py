@@ -24,12 +24,14 @@ def test_run_meta_analysis_experiment_writes_result_file() -> None:
 
     payload = json.loads(output_path.read_text(encoding="utf-8"))
     assert payload["experiment_name"] == "gb300_deepseek_v3_inference_fp8_tp8_pp9_bs1_in4k_out512"
-    assert payload["analysis"]["summary"]["captured_op_count"] == 63
+    assert payload["analysis"]["model_proxy_type"] == "deepseek_v3_mla_moe_proxy"
+    assert payload["analysis"]["summary"]["captured_op_count"] == 68
     assert payload["analysis"]["ops"][0]["op_name"] == "aten.embedding.default"
     assert payload["analysis"]["ops"][-1]["op_name"] == "aten.native_layer_norm.default"
     assert any(op["op_name"] == "custom.fc2.default" and op["op_kind"] == "custom" for op in payload["analysis"]["ops"])
     assert any(op["op_name"] == "aten.topk.default" for op in payload["analysis"]["ops"])
     assert any(op["op_name"] == "aten.silu.default" for op in payload["analysis"]["ops"])
+    assert any(op["op_name"] == "aten.bmm.default" for op in payload["analysis"]["ops"])
 
     with csv_path.open("r", encoding="utf-8", newline="") as handle:
         rows = list(csv.DictReader(handle))
