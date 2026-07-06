@@ -26,6 +26,15 @@ SUPPORTED_CAPTURE_OPS = {
     "aten.unsqueeze.default",
     "aten.mul.Tensor",
     "aten.sum.dim_IntList",
+    "aten.arange.default",
+    "aten.arange.start_step",
+    "aten.pow.Tensor_Tensor",
+    "aten.reciprocal.default",
+    "aten.cat.default",
+    "aten.cos.default",
+    "aten.sin.default",
+    "aten.slice.Tensor",
+    "aten.neg.default",
     "custom.fc2.default",
 }
 
@@ -37,6 +46,7 @@ IGNORED_CAPTURE_OPS = {
     "aten._unsafe_view.default",
     "aten.detach.default",
     "aten.clone.default",
+    "aten.select.int",
 }
 
 
@@ -118,6 +128,23 @@ def _extract_relevant_attrs(op_name: str, args: tuple[Any, ...], kwargs: Dict[st
     if op_name == "aten.sum.dim_IntList":
         dims = args[1] if len(args) > 1 else kwargs.get("dim")
         return {"dim": list(dims) if isinstance(dims, (list, tuple)) else dims}
+    if op_name == "aten.unsqueeze.default":
+        dim = args[1] if len(args) > 1 else kwargs.get("dim")
+        return {"dim": dim}
+    if op_name == "aten.arange.start_step":
+        return {"start": args[0], "end": args[1], "step": args[2]}
+    if op_name == "aten.arange.default":
+        return {"end": args[0] if args else kwargs.get("end")}
+    if op_name == "aten.cat.default":
+        dim = args[1] if len(args) > 1 else kwargs.get("dim")
+        return {"dim": dim}
+    if op_name == "aten.slice.Tensor":
+        return {
+            "dim": args[1] if len(args) > 1 else None,
+            "start": args[2] if len(args) > 2 else None,
+            "end": args[3] if len(args) > 3 else None,
+            "step": args[4] if len(args) > 4 else None,
+        }
     return {}
 
 

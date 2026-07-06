@@ -16,6 +16,11 @@ ACTIVATION_FLOP_COST = {
     "aten.add.Tensor": 1.0,
     "aten.mul.Tensor": 1.0,
     "aten.unsqueeze.default": 0.0,
+    "aten.cos.default": 4.0,
+    "aten.sin.default": 4.0,
+    "aten.neg.default": 1.0,
+    "aten.reciprocal.default": 1.0,
+    "aten.pow.Tensor_Tensor": 4.0,
 }
 
 
@@ -219,6 +224,20 @@ def _sum_memory(op_record: OpRecord) -> MemoryStats:
     return MemoryStats(read_bytes=read_bytes, write_bytes=write_bytes)
 
 
+def _copy_like_flops(op_record: OpRecord) -> float:
+    return 0.0
+
+
+def _copy_like_memory(op_record: OpRecord) -> MemoryStats:
+    precision = op_record.precision_context["storage_precision"]
+    total_input_numel = sum(tensor.numel for tensor in op_record.local_input_tensors)
+    output_numel = sum(tensor.numel for tensor in op_record.local_output_tensors)
+    return MemoryStats(
+        read_bytes=_tensor_bytes(total_input_numel, precision),
+        write_bytes=_tensor_bytes(output_numel, precision),
+    )
+
+
 register_operator("aten.embedding.default", OperatorSpec(get_flops=_embedding_flops, get_memory=_embedding_memory))
 register_operator("aten.addmm.default", OperatorSpec(get_flops=_addmm_flops, get_memory=_addmm_memory))
 register_operator(
@@ -238,3 +257,12 @@ register_operator("aten.zeros_like.default", OperatorSpec(get_flops=_zeros_like_
 register_operator("aten.scatter.src", OperatorSpec(get_flops=_scatter_flops, get_memory=_scatter_memory))
 register_operator("aten.stack.default", OperatorSpec(get_flops=_stack_flops, get_memory=_stack_memory))
 register_operator("aten.sum.dim_IntList", OperatorSpec(get_flops=_sum_flops, get_memory=_sum_memory))
+register_operator("aten.arange.default", OperatorSpec(get_flops=_zeros_like_flops, get_memory=_zeros_like_memory))
+register_operator("aten.arange.start_step", OperatorSpec(get_flops=_zeros_like_flops, get_memory=_zeros_like_memory))
+register_operator("aten.pow.Tensor_Tensor", OperatorSpec(get_flops=_elementwise_flops, get_memory=_elementwise_memory))
+register_operator("aten.reciprocal.default", OperatorSpec(get_flops=_elementwise_flops, get_memory=_elementwise_memory))
+register_operator("aten.cat.default", OperatorSpec(get_flops=_copy_like_flops, get_memory=_copy_like_memory))
+register_operator("aten.cos.default", OperatorSpec(get_flops=_elementwise_flops, get_memory=_elementwise_memory))
+register_operator("aten.sin.default", OperatorSpec(get_flops=_elementwise_flops, get_memory=_elementwise_memory))
+register_operator("aten.slice.Tensor", OperatorSpec(get_flops=_copy_like_flops, get_memory=_copy_like_memory))
+register_operator("aten.neg.default", OperatorSpec(get_flops=_elementwise_flops, get_memory=_elementwise_memory))

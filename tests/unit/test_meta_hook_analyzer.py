@@ -21,10 +21,12 @@ def test_meta_hook_analyzer_captures_expected_aten_ops() -> None:
         "proxy_top_k": 2,
         "proxy_expert_intermediate_size": 64,
         "proxy_attention_impl": "mla",
+        "proxy_mla_q_lora_rank": 8,
         "proxy_mla_kv_lora_rank": 8,
         "proxy_mla_qk_nope_head_dim": 4,
         "proxy_mla_qk_rope_head_dim": 4,
         "proxy_mla_v_head_dim": 8,
+        "proxy_rope_theta": 10000.0,
     }
     strategy_config = {
         "name": "proxy_strategy_test",
@@ -51,12 +53,16 @@ def test_meta_hook_analyzer_captures_expected_aten_ops() -> None:
 
     op_names = [op["op_name"] for op in result["ops"]]
     assert op_names[0] == "aten.embedding.default"
-    assert op_names.count("aten.addmm.default") == 16
+    assert op_names.count("aten.addmm.default") == 13
     assert op_names.count("aten.bmm.default") == 3
     assert op_names.count("aten._softmax.default") == 2
-    assert op_names.count("aten.silu.default") == 4
-    assert "aten.topk.default" in op_names
-    assert "aten.scatter.src" in op_names
-    assert op_names.count("custom.fc2.default") == 4
+    assert op_names.count("aten.silu.default") == 2
+    assert op_names.count("aten.arange.default") == 2
+    assert op_names.count("aten.reciprocal.default") == 2
+    assert op_names.count("aten.cat.default") == 2
+    assert op_names.count("aten.cos.default") == 2
+    assert op_names.count("aten.sin.default") == 2
+    assert op_names.count("aten.slice.Tensor") == 4
+    assert op_names.count("custom.fc2.default") == 2
     assert result["summary"]["captured_op_count"] == len(op_names)
     assert any(op["op_kind"] == "custom" for op in result["ops"])
