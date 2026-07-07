@@ -41,6 +41,7 @@ class ProxyInputSpec:
     activation: str
     num_layers: int
     analysis_phase: str
+    kv_cache_seq_len: int | None = None
 
 
 class DeepSeekV3ProxyMLAAttention(nn.Module):
@@ -54,6 +55,8 @@ class DeepSeekV3ProxyMLAAttention(nn.Module):
         qk_rope_head_dim: int,
         v_head_dim: int,
         rope_theta: float = 10000.0,
+        phase: str = "prefill",
+        decode_kv_cache_len: int = 0,
     ) -> None:
         super().__init__()
         self.hidden_size = hidden_size
@@ -64,6 +67,8 @@ class DeepSeekV3ProxyMLAAttention(nn.Module):
         self.qk_rope_head_dim = qk_rope_head_dim
         self.v_head_dim = v_head_dim
         self.rope_theta = rope_theta
+        self.phase = phase
+        self.decode_kv_cache_len = decode_kv_cache_len
         self.q_latent_proj = nn.Linear(hidden_size, q_lora_rank)
         self.q_nope_proj = nn.Linear(q_lora_rank, num_attention_heads * qk_nope_head_dim)
         self.q_rope_proj = nn.Linear(q_lora_rank, num_attention_heads * qk_rope_head_dim)
@@ -73,19 +78,30 @@ class DeepSeekV3ProxyMLAAttention(nn.Module):
         self.k_rope_proj = nn.Linear(hidden_size, qk_rope_head_dim)
         self.o_proj = nn.Linear(num_attention_heads * v_head_dim, hidden_size)
 
+        # Pre-absorbed decode weights (precomputed offline in a real engine).
+        # q_nope_absorb folds W_k_nope into the query so scores are computed against
+        # the compressed kv latent directly: (q_nope @ W_k_nope) @ kv_latent^T.
+        self.q_nope_absorb = nn.Parameter(
+            torch.empty(1, num_attention_heads, qk_nope_head_dim, kv_lora_rank)
+        )
+        # vo_absorb folds W_v @ W_o into one matrix mapping the latent-space attention
+        # output straight to hidden: (probs @ kv_latent) @ (W_v @ W_o).
+        self.vo_absorb = nn.Parameter(
+            torch.empty(1, num_attention_heads, kv_lora_rank, hidden_size)
+        )
+
     @staticmethod
     def _rotate_half(x: torch.Tensor) -> torch.Tensor:
         x1 = x[..., ::2]
         x2 = x[..., 1::2]
         return torch.stack((-x2, x1), dim=-1).flatten(-2)
 
-    def _apply_rope(self, x: torch.Tensor) -> torch.Tensor:
+    def _apply_rope(self, x: torch.Tensor, offset: int = 0) -> torch.Tensor:
         seq_len = x.shape[-2]
         dim = x.shape[-1]
-        positions = torch.arange(seq_len, device=x.device, dtype=torch.float32)
+        positions = torch.arange(offset, offset + seq_len, device=x.device, dtype=torch.float32)
         inv_freq = 1.0 / (
-            self.rope_theta
-            ** (torch.arange(0, dim, 2, device=x.device, dtype=torch.float32) / dim)
+            self.rope_theta ** (torch.arange(0, dim, 2, device=x.device, dtype=torch.float32) / dim)
         )
         freqs = torch.outer(positions, inv_freq)
         emb = torch.cat((freqs, freqs), dim=-1)
@@ -93,7 +109,7 @@ class DeepSeekV3ProxyMLAAttention(nn.Module):
         sin = emb.sin().unsqueeze(0).unsqueeze(0)
         return x * cos + self._rotate_half(x) * sin
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def _forward_prefill(self, x: torch.Tensor) -> torch.Tensor:
         batch_size, seq_len, _ = x.shape
         q_latent = self.q_latent_proj(x)
         q_nope = self.q_nope_proj(q_latent).view(
@@ -102,7 +118,7 @@ class DeepSeekV3ProxyMLAAttention(nn.Module):
         q_rope = self.q_rope_proj(q_latent).view(
             batch_size, seq_len, self.num_attention_heads, self.qk_rope_head_dim
         ).transpose(1, 2)
-        q_rope = self._apply_rope(q_rope)
+        q_rope = self._apply_rope(q_rope, offset=0)
 
         kv_latent = self.kv_latent_proj(x)
         k_nope = self.k_nope_proj(kv_latent).view(
@@ -114,7 +130,7 @@ class DeepSeekV3ProxyMLAAttention(nn.Module):
 
         k_rope = self.k_rope_proj(x).view(batch_size, seq_len, 1, self.qk_rope_head_dim).transpose(1, 2)
         k_rope = k_rope.expand(batch_size, self.num_attention_heads, seq_len, self.qk_rope_head_dim)
-        k_rope = self._apply_rope(k_rope)
+        k_rope = self._apply_rope(k_rope, offset=0)
 
         scores_nope = torch.matmul(q_nope, k_nope.transpose(-1, -2))
         scores_rope = torch.matmul(q_rope, k_rope.transpose(-1, -2))
@@ -125,6 +141,75 @@ class DeepSeekV3ProxyMLAAttention(nn.Module):
             batch_size, seq_len, self.num_attention_heads * self.v_head_dim
         )
         return self.o_proj(context)
+
+    def _forward_decode(self, x: torch.Tensor) -> torch.Tensor:
+        batch_size, seq_len, _ = x.shape
+
+        # Current-step query in the compressed latent space (nope branch absorbed).
+        q_latent = self.q_latent_proj(x)
+        q_nope = self.q_nope_proj(q_latent).view(
+            batch_size, seq_len, self.num_attention_heads, self.qk_nope_head_dim
+        ).transpose(1, 2)
+        # Absorb W_k_nope into the query: q_nope @ (W_q_nope-side @ W_k_nope) -> latent.
+        q_nope_latent = torch.matmul(q_nope, self.q_nope_absorb)
+
+        q_rope = self.q_rope_proj(q_latent).view(
+            batch_size, seq_len, self.num_attention_heads, self.qk_rope_head_dim
+        ).transpose(1, 2)
+        q_rope = self._apply_rope(q_rope, offset=self.decode_kv_cache_len)
+
+        # KV cache stores the compressed latent (kv_lora_rank), not expanded K/V.
+        current_kv_latent = self.kv_latent_proj(x).unsqueeze(1).expand(
+            batch_size, self.num_attention_heads, seq_len, self.kv_lora_rank
+        )
+        cache_kv_latent = torch.zeros(
+            batch_size,
+            self.num_attention_heads,
+            self.decode_kv_cache_len,
+            self.kv_lora_rank,
+            device=x.device,
+            dtype=x.dtype,
+        )
+        kv_latent_full = torch.cat((cache_kv_latent, current_kv_latent), dim=2)
+
+        # Decoupled rope key branch is cached separately (small, per-position).
+        current_k_rope = self.k_rope_proj(x).view(
+            batch_size, seq_len, 1, self.qk_rope_head_dim
+        ).transpose(1, 2)
+        current_k_rope = current_k_rope.expand(
+            batch_size,
+            self.num_attention_heads,
+            seq_len,
+            self.qk_rope_head_dim,
+        )
+        current_k_rope = self._apply_rope(current_k_rope, offset=self.decode_kv_cache_len)
+        cache_k_rope = torch.zeros(
+            batch_size,
+            self.num_attention_heads,
+            self.decode_kv_cache_len,
+            self.qk_rope_head_dim,
+            device=x.device,
+            dtype=x.dtype,
+        )
+        k_rope_full = torch.cat((cache_k_rope, current_k_rope), dim=2)
+
+        # Scores computed directly against the compressed latent + rope branch.
+        scores_nope = torch.matmul(q_nope_latent, kv_latent_full.transpose(-1, -2))
+        scores_rope = torch.matmul(q_rope, k_rope_full.transpose(-1, -2))
+        scores = (scores_nope + scores_rope) / ((self.qk_nope_head_dim + self.qk_rope_head_dim) ** 0.5)
+        probs = torch.softmax(scores, dim=-1)
+
+        # Attention output stays in latent space, then a single absorbed (W_v @ W_o)
+        # matrix maps it straight to hidden per head, summed over heads.
+        latent_context = torch.matmul(probs, kv_latent_full)
+        head_hidden = torch.matmul(latent_context, self.vo_absorb)
+        context = head_hidden.sum(dim=1)
+        return context + self.o_proj.bias.view(1, 1, -1)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if self.phase == "decode":
+            return self._forward_decode(x)
+        return self._forward_prefill(x)
 
 
 class DeepSeekV3ProxyMoEExpert(nn.Module):
@@ -204,6 +289,8 @@ class DeepSeekV3ProxyDecoderBlock(nn.Module):
         mla_qk_rope_head_dim: int = 64,
         mla_v_head_dim: int = 128,
         rope_theta: float = 10000.0,
+        phase: str = "prefill",
+        decode_kv_cache_len: int = 0,
     ) -> None:
         super().__init__()
         self.norm1 = nn.LayerNorm(hidden_size, eps=norm_eps)
@@ -217,6 +304,8 @@ class DeepSeekV3ProxyDecoderBlock(nn.Module):
                 qk_rope_head_dim=mla_qk_rope_head_dim,
                 v_head_dim=mla_v_head_dim,
                 rope_theta=rope_theta,
+                phase=phase,
+                decode_kv_cache_len=decode_kv_cache_len,
             )
         else:
             raise ValueError(f"Unsupported attention implementation for DeepSeek V3 proxy: {attention_impl}")
@@ -274,6 +363,8 @@ class DeepSeekV3ProxyModel(nn.Module):
         mla_qk_rope_head_dim: int = 64,
         mla_v_head_dim: int = 128,
         rope_theta: float = 10000.0,
+        phase: str = "prefill",
+        decode_kv_cache_len: int = 0,
     ) -> None:
         super().__init__()
         self.embedding = nn.Embedding(vocab_size, hidden_size)
@@ -296,6 +387,8 @@ class DeepSeekV3ProxyModel(nn.Module):
                     mla_qk_rope_head_dim=mla_qk_rope_head_dim,
                     mla_v_head_dim=mla_v_head_dim,
                     rope_theta=rope_theta,
+                    phase=phase,
+                    decode_kv_cache_len=decode_kv_cache_len,
                 )
                 for _ in range(num_layers)
             ]
@@ -313,7 +406,7 @@ def build_deepseek_v3_proxy(
     workload_config: Dict[str, Any],
     phase: str = "prefill",
 ) -> tuple[DeepSeekV3ProxyModel, ProxyInputSpec]:
-    if phase != "prefill":
+    if phase not in {"prefill", "decode"}:
         raise ValueError(f"Unsupported analysis phase for v1 proxy: {phase}")
 
     vocab_size = int(workload_config.get("proxy_vocab_size", DEFAULT_DEEPSEEK_V3_PROXY_CONFIG["vocab_size"]))
@@ -376,6 +469,9 @@ def build_deepseek_v3_proxy(
 
     batch_size = int(workload_config["global_batch_size"])
     input_seq_len = int(workload_config["input_seq_len"])
+    output_seq_len = int(workload_config["output_seq_len"])
+    default_decode_kv_cache_len = input_seq_len + (output_seq_len // 2)
+    decode_kv_cache_len = int(workload_config.get("proxy_decode_kv_cache_len", default_decode_kv_cache_len))
 
     with torch.device("meta"):
         model = DeepSeekV3ProxyModel(
@@ -397,10 +493,14 @@ def build_deepseek_v3_proxy(
             mla_qk_rope_head_dim=mla_qk_rope_head_dim,
             mla_v_head_dim=mla_v_head_dim,
             rope_theta=rope_theta,
+            phase=phase,
+            decode_kv_cache_len=decode_kv_cache_len,
         )
 
+    input_shape = [batch_size, input_seq_len] if phase == "prefill" else [batch_size, 1]
+    kv_cache_seq_len = None if phase == "prefill" else decode_kv_cache_len
     input_spec = ProxyInputSpec(
-        shape=[batch_size, input_seq_len],
+        shape=input_shape,
         dtype="int64",
         input_kind="token_ids",
         hidden_size=hidden_size,
@@ -408,5 +508,6 @@ def build_deepseek_v3_proxy(
         activation=activation,
         num_layers=num_layers,
         analysis_phase=phase,
+        kv_cache_seq_len=kv_cache_seq_len,
     )
     return model, input_spec

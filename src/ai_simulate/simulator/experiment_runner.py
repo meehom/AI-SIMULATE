@@ -38,6 +38,31 @@ def _build_result_payload(
     analysis_result: Dict[str, Any],
     proxy_input_spec: Any,
 ) -> Dict[str, Any]:
+    analysis_payload = {
+        **analysis_result,
+        "model_proxy_type": "deepseek_v3_mla_moe_proxy",
+        "proxy_input_spec": {
+            "shape": proxy_input_spec.shape,
+            "dtype": proxy_input_spec.dtype,
+            "input_kind": proxy_input_spec.input_kind,
+            "hidden_size": proxy_input_spec.hidden_size,
+            "intermediate_size": proxy_input_spec.intermediate_size,
+            "activation": proxy_input_spec.activation,
+            "num_layers": proxy_input_spec.num_layers,
+            "analysis_phase": proxy_input_spec.analysis_phase,
+            "kv_cache_seq_len": proxy_input_spec.kv_cache_seq_len,
+        },
+        "recorded_output_seq_len": resolved_experiment.workload_config["output_seq_len"],
+    }
+    if analysis_phase == "decode":
+        per_step_time = analysis_result["summary"]["total_predicted_time_s"]
+        output_seq_len = int(resolved_experiment.workload_config["output_seq_len"])
+        analysis_payload["decode_estimate"] = {
+            "per_step_predicted_time_s": per_step_time,
+            "estimated_total_decode_time_s": per_step_time * output_seq_len,
+            "estimated_output_steps": output_seq_len,
+        }
+
     return {
         "experiment_name": resolved_experiment.experiment_config["name"],
         "experiment_path": str(resolved_experiment.experiment_path),
@@ -48,21 +73,10 @@ def _build_result_payload(
         },
         "workload_config": resolved_experiment.workload_config,
         "strategy_config": resolved_experiment.strategy_config,
-        "analysis": {
-            **analysis_result,
-            "model_proxy_type": "deepseek_v3_mla_moe_proxy",
-            "proxy_input_spec": {
-                "shape": proxy_input_spec.shape,
-                "hidden_size": proxy_input_spec.hidden_size,
-                "intermediate_size": proxy_input_spec.intermediate_size,
-                "activation": proxy_input_spec.activation,
-                "analysis_phase": proxy_input_spec.analysis_phase,
-            },
-            "recorded_output_seq_len": resolved_experiment.workload_config["output_seq_len"],
-        },
+        "analysis": analysis_payload,
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "notes": [
-            "This prototype uses a 2-layer MLP as a stand-in for DeepSeek V3.",
+            "This prototype uses a structural DeepSeek V3 MLA + MoE proxy.",
             f"Analysis phase is restricted to {analysis_phase} semantics in v1.",
             "Current roofline timing is based on intercepted built-in PyTorch ops under dispatch capture.",
         ],
@@ -79,8 +93,8 @@ def _bottleneck_label(raw: str) -> str:
     return "compute_bound" if raw == "compute" else "memory_bound"
 
 
-def _write_operator_csv(output_dir: Path, analysis_result: Dict[str, Any]) -> Path:
-    csv_path = output_dir / "op_trace.csv"
+def _write_operator_csv(output_dir: Path, analysis_result: Dict[str, Any], phase: str) -> Path:
+    csv_path = output_dir / f"op_trace_{phase}.csv"
     with csv_path.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.writer(handle)
         writer.writerow([
@@ -120,8 +134,8 @@ def _trace_shape(tensors: list[Dict[str, Any]]) -> list[int] | None:
     return tensors[0].get("shape")
 
 
-def _write_chrome_trace(output_dir: Path, result_payload: Dict[str, Any]) -> Path:
-    trace_path = output_dir / "chrome_trace.json"
+def _write_chrome_trace(output_dir: Path, result_payload: Dict[str, Any], phase: str) -> Path:
+    trace_path = output_dir / f"chrome_trace_{phase}.json"
     analysis = result_payload["analysis"]
     trace_events = [
         {
@@ -136,7 +150,7 @@ def _write_chrome_trace(output_dir: Path, result_payload: Dict[str, Any]) -> Pat
             "ph": "M",
             "pid": 1,
             "tid": 0,
-            "args": {"name": "predicted_op_timeline"},
+            "args": {"name": f"predicted_op_timeline_{phase}"},
         },
     ]
 
@@ -155,6 +169,7 @@ def _write_chrome_trace(output_dir: Path, result_payload: Dict[str, Any]) -> Pat
                 "ts": cursor_us,
                 "dur": dur_us,
                 "args": {
+                    "phase": phase,
                     "op_index": op["op_index"],
                     "op_kind": op["op_kind"],
                     "predicted_time_s": metrics["predicted_time_s"],
@@ -186,7 +201,7 @@ def _write_chrome_trace(output_dir: Path, result_payload: Dict[str, Any]) -> Pat
 
 
 def run_meta_analysis_experiment(experiment_path: str | Path, phase: str = "prefill") -> Dict[str, Any]:
-    if phase != "prefill":
+    if phase not in {"prefill", "decode"}:
         raise ValueError(f"Unsupported analysis phase for v1: {phase}")
 
     resolved_experiment = load_experiment(experiment_path)
@@ -213,12 +228,12 @@ def run_meta_analysis_experiment(experiment_path: str | Path, phase: str = "pref
 
     output_dir = resolved_experiment.output_dir
     output_dir.mkdir(parents=True, exist_ok=True)
-    output_path = output_dir / "meta_hook_analysis.json"
+    output_path = output_dir / f"meta_hook_analysis_{phase}.json"
     with output_path.open("w", encoding="utf-8") as handle:
         json.dump(result_payload, handle, indent=2, ensure_ascii=False)
 
-    csv_path = _write_operator_csv(output_dir, analysis_result)
-    trace_path = _write_chrome_trace(output_dir, result_payload)
+    csv_path = _write_operator_csv(output_dir, analysis_result, phase)
+    trace_path = _write_chrome_trace(output_dir, result_payload, phase)
 
     result_payload["output_path"] = str(output_path)
     result_payload["op_csv_path"] = str(csv_path)

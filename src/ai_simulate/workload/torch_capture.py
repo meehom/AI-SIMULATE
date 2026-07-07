@@ -27,6 +27,7 @@ SUPPORTED_CAPTURE_OPS = {
     "aten.mul.Tensor",
     "aten.sum.dim_IntList",
     "aten.arange.default",
+    "aten.arange.start",
     "aten.arange.start_step",
     "aten.pow.Tensor_Tensor",
     "aten.reciprocal.default",
@@ -35,6 +36,7 @@ SUPPORTED_CAPTURE_OPS = {
     "aten.sin.default",
     "aten.slice.Tensor",
     "aten.neg.default",
+    "aten.zeros.default",
     "custom.fc2.default",
 }
 

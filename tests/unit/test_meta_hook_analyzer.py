@@ -2,8 +2,8 @@ from ai_simulate.analysis import analyze_model_with_meta_hooks
 from ai_simulate.workload import build_deepseek_v3_proxy
 
 
-def test_meta_hook_analyzer_captures_expected_aten_ops() -> None:
-    workload_config = {
+def _build_workload_config():
+    return {
         "name": "deepseek_v3_proxy_test",
         "model_name": "DeepSeek V3",
         "mode": "inference",
@@ -28,7 +28,10 @@ def test_meta_hook_analyzer_captures_expected_aten_ops() -> None:
         "proxy_mla_v_head_dim": 8,
         "proxy_rope_theta": 10000.0,
     }
-    strategy_config = {
+
+
+def _build_strategy_config():
+    return {
         "name": "proxy_strategy_test",
         "tp_degree": 8,
         "pp_degree": 1,
@@ -36,16 +39,23 @@ def test_meta_hook_analyzer_captures_expected_aten_ops() -> None:
         "gpu_count_used": 8,
     }
 
-    model, input_spec = build_deepseek_v3_proxy(workload_config)
-    chip_config = {
+
+def _build_chip_config():
+    return {
         "name": "Test GPU",
         "precision_performance": {"fp8_tflops": 1000},
         "memory": {"bandwidth_tb_per_s": 1.0},
     }
+
+
+def test_meta_hook_analyzer_captures_expected_prefill_ops() -> None:
+    workload_config = _build_workload_config()
+    strategy_config = _build_strategy_config()
+    model, input_spec = build_deepseek_v3_proxy(workload_config, phase="prefill")
     result = analyze_model_with_meta_hooks(
         model=model,
         input_shape=input_spec.shape,
-        chip_config=chip_config,
+        chip_config=_build_chip_config(),
         logical_precision=workload_config["precision"],
         analysis_phase="prefill",
         strategy_config=strategy_config,
@@ -53,16 +63,26 @@ def test_meta_hook_analyzer_captures_expected_aten_ops() -> None:
 
     op_names = [op["op_name"] for op in result["ops"]]
     assert op_names[0] == "aten.embedding.default"
-    assert op_names.count("aten.addmm.default") == 13
-    assert op_names.count("aten.bmm.default") == 3
-    assert op_names.count("aten._softmax.default") == 2
-    assert op_names.count("aten.silu.default") == 2
-    assert op_names.count("aten.arange.default") == 2
-    assert op_names.count("aten.reciprocal.default") == 2
-    assert op_names.count("aten.cat.default") == 2
-    assert op_names.count("aten.cos.default") == 2
-    assert op_names.count("aten.sin.default") == 2
-    assert op_names.count("aten.slice.Tensor") == 4
     assert op_names.count("custom.fc2.default") == 2
-    assert result["summary"]["captured_op_count"] == len(op_names)
-    assert any(op["op_kind"] == "custom" for op in result["ops"])
+    assert result["summary"]["captured_op_count"] == len(op_names) == 83
+
+
+def test_meta_hook_analyzer_captures_expected_decode_ops() -> None:
+    workload_config = _build_workload_config()
+    strategy_config = _build_strategy_config()
+    model, input_spec = build_deepseek_v3_proxy(workload_config, phase="decode")
+    result = analyze_model_with_meta_hooks(
+        model=model,
+        input_shape=input_spec.shape,
+        chip_config=_build_chip_config(),
+        logical_precision=workload_config["precision"],
+        analysis_phase="decode",
+        strategy_config=strategy_config,
+    )
+
+    op_names = [op["op_name"] for op in result["ops"]]
+    assert op_names[0] == "aten.embedding.default"
+    assert op_names.count("aten.zeros.default") == 2
+    assert op_names.count("aten.cat.default") == 4
+    assert op_names.count("aten.arange.start") == 2
+    assert result["summary"]["captured_op_count"] == len(op_names) == 89

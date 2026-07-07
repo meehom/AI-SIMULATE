@@ -1,0 +1,4347 @@
+{
+  "traceEvents": [
+    {
+      "name": "process_name",
+      "ph": "M",
+      "pid": 1,
+      "tid": 0,
+      "args": {
+        "name": "gb300_deepseek_v3_inference_fp8_tp8_pp9_bs1_in4k_out512"
+      }
+    },
+    {
+      "name": "thread_name",
+      "ph": "M",
+      "pid": 1,
+      "tid": 0,
+      "args": {
+        "name": "predicted_op_timeline_prefill"
+      }
+    },
+    {
+      "name": "aten.embedding.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 0.0,
+      "dur": 95.42451200000001,
+      "args": {
+        "phase": "prefill",
+        "op_index": 0,
+        "op_kind": "builtin",
+        "predicted_time_s": 9.5424512e-05,
+        "compute_time_s": 0.0,
+        "memory_time_s": 9.5424512e-05,
+        "bottleneck": "memory_bound",
+        "flops": 0.0,
+        "memory_bytes_total": 763396096,
+        "arithmetic_intensity": 0.0,
+        "input_shape": [
+          102400,
+          7168
+        ],
+        "output_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "local_input_shape": [
+          102400,
+          7168
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.native_layer_norm.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 95.42451200000001,
+      "dur": 7.341824000000001,
+      "args": {
+        "phase": "prefill",
+        "op_index": 1,
+        "op_kind": "builtin",
+        "predicted_time_s": 7.341824e-06,
+        "compute_time_s": 2.05520896e-08,
+        "memory_time_s": 7.341824e-06,
+        "bottleneck": "memory_bound",
+        "flops": 205520896.0,
+        "memory_bytes_total": 58734592,
+        "arithmetic_intensity": 3.4991457163778374,
+        "input_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "output_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "local_input_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "normalized_shape": [
+            7168
+          ],
+          "eps": 1e-05
+        }
+      }
+    },
+    {
+      "name": "aten.addmm.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 102.76633600000001,
+      "dur": 1.417408,
+      "args": {
+        "phase": "prefill",
+        "op_index": 2,
+        "op_kind": "builtin",
+        "predicted_time_s": 1.417408e-06,
+        "compute_time_s": 6.576668672e-07,
+        "memory_time_s": 1.417408e-06,
+        "bottleneck": "memory_bound",
+        "flops": 6576668672.0,
+        "memory_bytes_total": 11339264,
+        "arithmetic_intensity": 579.9907888201562,
+        "input_shape": [
+          1536
+        ],
+        "output_shape": [
+          4096,
+          1536
+        ],
+        "local_input_shape": [
+          1536
+        ],
+        "local_output_shape": [
+          4096,
+          1536
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "row"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.addmm.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 104.183744,
+      "dur": 1.9327352832,
+      "args": {
+        "phase": "prefill",
+        "op_index": 3,
+        "op_kind": "builtin",
+        "predicted_time_s": 1.9327352832e-06,
+        "compute_time_s": 1.9327352832e-06,
+        "memory_time_s": 1.10188e-06,
+        "bottleneck": "compute_bound",
+        "flops": 19327352832.0,
+        "memory_bytes_total": 8815040,
+        "arithmetic_intensity": 2192.5428395106546,
+        "input_shape": [
+          3584
+        ],
+        "output_shape": [
+          4096,
+          3584
+        ],
+        "local_input_shape": [
+          448
+        ],
+        "local_output_shape": [
+          4096,
+          448
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "column"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.addmm.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 106.11647928320001,
+      "dur": 1.9327352832,
+      "args": {
+        "phase": "prefill",
+        "op_index": 4,
+        "op_kind": "builtin",
+        "predicted_time_s": 1.9327352832e-06,
+        "compute_time_s": 1.9327352832e-06,
+        "memory_time_s": 1.10188e-06,
+        "bottleneck": "compute_bound",
+        "flops": 19327352832.0,
+        "memory_bytes_total": 8815040,
+        "arithmetic_intensity": 2192.5428395106546,
+        "input_shape": [
+          3584
+        ],
+        "output_shape": [
+          4096,
+          3584
+        ],
+        "local_input_shape": [
+          448
+        ],
+        "local_output_shape": [
+          4096,
+          448
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "column"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.arange.start",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 108.04921456640001,
+      "dur": 0.000512,
+      "args": {
+        "phase": "prefill",
+        "op_index": 5,
+        "op_kind": "builtin",
+        "predicted_time_s": 5.12e-10,
+        "compute_time_s": 0.0,
+        "memory_time_s": 5.12e-10,
+        "bottleneck": "memory_bound",
+        "flops": 0.0,
+        "memory_bytes_total": 4096,
+        "arithmetic_intensity": 0.0,
+        "input_shape": null,
+        "output_shape": [
+          4096
+        ],
+        "local_input_shape": null,
+        "local_output_shape": [
+          4096
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.arange.start_step",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 108.04972656640001,
+      "dur": 4e-06,
+      "args": {
+        "phase": "prefill",
+        "op_index": 6,
+        "op_kind": "builtin",
+        "predicted_time_s": 4e-12,
+        "compute_time_s": 0.0,
+        "memory_time_s": 4e-12,
+        "bottleneck": "memory_bound",
+        "flops": 0.0,
+        "memory_bytes_total": 32,
+        "arithmetic_intensity": 0.0,
+        "input_shape": null,
+        "output_shape": [
+          32
+        ],
+        "local_input_shape": null,
+        "local_output_shape": [
+          32
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "start": 0,
+          "end": 64,
+          "step": 2
+        }
+      }
+    },
+    {
+      "name": "aten.div.Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 108.04973056640002,
+      "dur": 8e-06,
+      "args": {
+        "phase": "prefill",
+        "op_index": 7,
+        "op_kind": "builtin",
+        "predicted_time_s": 8e-12,
+        "compute_time_s": 3.2e-15,
+        "memory_time_s": 8e-12,
+        "bottleneck": "memory_bound",
+        "flops": 32.0,
+        "memory_bytes_total": 64,
+        "arithmetic_intensity": 0.5,
+        "input_shape": [
+          32
+        ],
+        "output_shape": [
+          32
+        ],
+        "local_input_shape": [
+          32
+        ],
+        "local_output_shape": [
+          32
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.pow.Tensor_Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 108.04973856640001,
+      "dur": 8e-06,
+      "args": {
+        "phase": "prefill",
+        "op_index": 8,
+        "op_kind": "builtin",
+        "predicted_time_s": 8e-12,
+        "compute_time_s": 1.28e-14,
+        "memory_time_s": 8e-12,
+        "bottleneck": "memory_bound",
+        "flops": 128.0,
+        "memory_bytes_total": 64,
+        "arithmetic_intensity": 2.0,
+        "input_shape": [],
+        "output_shape": [
+          32
+        ],
+        "local_input_shape": [],
+        "local_output_shape": [
+          32
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.reciprocal.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 108.0497465664,
+      "dur": 8e-06,
+      "args": {
+        "phase": "prefill",
+        "op_index": 9,
+        "op_kind": "builtin",
+        "predicted_time_s": 8e-12,
+        "compute_time_s": 3.2e-15,
+        "memory_time_s": 8e-12,
+        "bottleneck": "memory_bound",
+        "flops": 32.0,
+        "memory_bytes_total": 64,
+        "arithmetic_intensity": 0.5,
+        "input_shape": [
+          32
+        ],
+        "output_shape": [
+          32
+        ],
+        "local_input_shape": [
+          32
+        ],
+        "local_output_shape": [
+          32
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.mul.Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 108.0497545664,
+      "dur": 8e-06,
+      "args": {
+        "phase": "prefill",
+        "op_index": 10,
+        "op_kind": "builtin",
+        "predicted_time_s": 8e-12,
+        "compute_time_s": 3.2e-15,
+        "memory_time_s": 8e-12,
+        "bottleneck": "memory_bound",
+        "flops": 32.0,
+        "memory_bytes_total": 64,
+        "arithmetic_intensity": 0.5,
+        "input_shape": [
+          32
+        ],
+        "output_shape": [
+          32
+        ],
+        "local_input_shape": [
+          32
+        ],
+        "local_output_shape": [
+          32
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.mul.Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 108.04976256639999,
+      "dur": 0.0169,
+      "args": {
+        "phase": "prefill",
+        "op_index": 11,
+        "op_kind": "builtin",
+        "predicted_time_s": 1.69e-08,
+        "compute_time_s": 1.31072e-11,
+        "memory_time_s": 1.69e-08,
+        "bottleneck": "memory_bound",
+        "flops": 131072.0,
+        "memory_bytes_total": 135200,
+        "arithmetic_intensity": 0.9694674556213018,
+        "input_shape": [
+          4096,
+          1
+        ],
+        "output_shape": [
+          4096,
+          32
+        ],
+        "local_input_shape": [
+          4096,
+          1
+        ],
+        "local_output_shape": [
+          4096,
+          32
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.cat.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 108.0666625664,
+      "dur": 0.065536,
+      "args": {
+        "phase": "prefill",
+        "op_index": 12,
+        "op_kind": "builtin",
+        "predicted_time_s": 6.5536e-08,
+        "compute_time_s": 0.0,
+        "memory_time_s": 6.5536e-08,
+        "bottleneck": "memory_bound",
+        "flops": 0.0,
+        "memory_bytes_total": 524288,
+        "arithmetic_intensity": 0.0,
+        "input_shape": [
+          4096,
+          32
+        ],
+        "output_shape": [
+          4096,
+          64
+        ],
+        "local_input_shape": [
+          4096,
+          32
+        ],
+        "local_output_shape": [
+          4096,
+          64
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "dim": -1
+        }
+      }
+    },
+    {
+      "name": "aten.cos.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 108.13219856639999,
+      "dur": 0.065536,
+      "args": {
+        "phase": "prefill",
+        "op_index": 13,
+        "op_kind": "builtin",
+        "predicted_time_s": 6.5536e-08,
+        "compute_time_s": 1.048576e-10,
+        "memory_time_s": 6.5536e-08,
+        "bottleneck": "memory_bound",
+        "flops": 1048576.0,
+        "memory_bytes_total": 524288,
+        "arithmetic_intensity": 2.0,
+        "input_shape": [
+          4096,
+          64
+        ],
+        "output_shape": [
+          4096,
+          64
+        ],
+        "local_input_shape": [
+          4096,
+          64
+        ],
+        "local_output_shape": [
+          4096,
+          64
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.unsqueeze.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 108.19773456639999,
+      "dur": 0.065536,
+      "args": {
+        "phase": "prefill",
+        "op_index": 14,
+        "op_kind": "builtin",
+        "predicted_time_s": 6.5536e-08,
+        "compute_time_s": 0.0,
+        "memory_time_s": 6.5536e-08,
+        "bottleneck": "memory_bound",
+        "flops": 0.0,
+        "memory_bytes_total": 524288,
+        "arithmetic_intensity": 0.0,
+        "input_shape": [
+          4096,
+          64
+        ],
+        "output_shape": [
+          1,
+          4096,
+          64
+        ],
+        "local_input_shape": [
+          4096,
+          64
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          64
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "dim": 0
+        }
+      }
+    },
+    {
+      "name": "aten.unsqueeze.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 108.26327056639998,
+      "dur": 0.065536,
+      "args": {
+        "phase": "prefill",
+        "op_index": 15,
+        "op_kind": "builtin",
+        "predicted_time_s": 6.5536e-08,
+        "compute_time_s": 0.0,
+        "memory_time_s": 6.5536e-08,
+        "bottleneck": "memory_bound",
+        "flops": 0.0,
+        "memory_bytes_total": 524288,
+        "arithmetic_intensity": 0.0,
+        "input_shape": [
+          1,
+          4096,
+          64
+        ],
+        "output_shape": [
+          1,
+          1,
+          4096,
+          64
+        ],
+        "local_input_shape": [
+          1,
+          4096,
+          64
+        ],
+        "local_output_shape": [
+          1,
+          1,
+          4096,
+          64
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "dim": 0
+        }
+      }
+    },
+    {
+      "name": "aten.sin.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 108.32880656639998,
+      "dur": 0.065536,
+      "args": {
+        "phase": "prefill",
+        "op_index": 16,
+        "op_kind": "builtin",
+        "predicted_time_s": 6.5536e-08,
+        "compute_time_s": 1.048576e-10,
+        "memory_time_s": 6.5536e-08,
+        "bottleneck": "memory_bound",
+        "flops": 1048576.0,
+        "memory_bytes_total": 524288,
+        "arithmetic_intensity": 2.0,
+        "input_shape": [
+          4096,
+          64
+        ],
+        "output_shape": [
+          4096,
+          64
+        ],
+        "local_input_shape": [
+          4096,
+          64
+        ],
+        "local_output_shape": [
+          4096,
+          64
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.unsqueeze.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 108.39434256639997,
+      "dur": 0.065536,
+      "args": {
+        "phase": "prefill",
+        "op_index": 17,
+        "op_kind": "builtin",
+        "predicted_time_s": 6.5536e-08,
+        "compute_time_s": 0.0,
+        "memory_time_s": 6.5536e-08,
+        "bottleneck": "memory_bound",
+        "flops": 0.0,
+        "memory_bytes_total": 524288,
+        "arithmetic_intensity": 0.0,
+        "input_shape": [
+          4096,
+          64
+        ],
+        "output_shape": [
+          1,
+          4096,
+          64
+        ],
+        "local_input_shape": [
+          4096,
+          64
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          64
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "dim": 0
+        }
+      }
+    },
+    {
+      "name": "aten.unsqueeze.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 108.45987856639996,
+      "dur": 0.065536,
+      "args": {
+        "phase": "prefill",
+        "op_index": 18,
+        "op_kind": "builtin",
+        "predicted_time_s": 6.5536e-08,
+        "compute_time_s": 0.0,
+        "memory_time_s": 6.5536e-08,
+        "bottleneck": "memory_bound",
+        "flops": 0.0,
+        "memory_bytes_total": 524288,
+        "arithmetic_intensity": 0.0,
+        "input_shape": [
+          1,
+          4096,
+          64
+        ],
+        "output_shape": [
+          1,
+          1,
+          4096,
+          64
+        ],
+        "local_input_shape": [
+          1,
+          4096,
+          64
+        ],
+        "local_output_shape": [
+          1,
+          1,
+          4096,
+          64
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "dim": 0
+        }
+      }
+    },
+    {
+      "name": "aten.mul.Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 108.52541456639996,
+      "dur": 3.702784,
+      "args": {
+        "phase": "prefill",
+        "op_index": 19,
+        "op_kind": "builtin",
+        "predicted_time_s": 3.702784e-06,
+        "compute_time_s": 1.4680064e-09,
+        "memory_time_s": 3.702784e-06,
+        "bottleneck": "memory_bound",
+        "flops": 14680064.0,
+        "memory_bytes_total": 29622272,
+        "arithmetic_intensity": 0.49557522123893805,
+        "input_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "output_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "local_input_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "local_output_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.slice.Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 112.22819856639995,
+      "dur": 2.752512,
+      "args": {
+        "phase": "prefill",
+        "op_index": 20,
+        "op_kind": "builtin",
+        "predicted_time_s": 2.752512e-06,
+        "compute_time_s": 0.0,
+        "memory_time_s": 2.752512e-06,
+        "bottleneck": "memory_bound",
+        "flops": 0.0,
+        "memory_bytes_total": 22020096,
+        "arithmetic_intensity": 0.0,
+        "input_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "output_shape": [
+          1,
+          56,
+          4096,
+          32
+        ],
+        "local_input_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "local_output_shape": [
+          1,
+          56,
+          4096,
+          32
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "dim": 3,
+          "start": 0,
+          "end": 9223372036854775807,
+          "step": 2
+        }
+      }
+    },
+    {
+      "name": "aten.slice.Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 114.98071056639995,
+      "dur": 2.752512,
+      "args": {
+        "phase": "prefill",
+        "op_index": 21,
+        "op_kind": "builtin",
+        "predicted_time_s": 2.752512e-06,
+        "compute_time_s": 0.0,
+        "memory_time_s": 2.752512e-06,
+        "bottleneck": "memory_bound",
+        "flops": 0.0,
+        "memory_bytes_total": 22020096,
+        "arithmetic_intensity": 0.0,
+        "input_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "output_shape": [
+          1,
+          56,
+          4096,
+          32
+        ],
+        "local_input_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "local_output_shape": [
+          1,
+          56,
+          4096,
+          32
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "dim": 3,
+          "start": 1,
+          "end": 9223372036854775807,
+          "step": 2
+        }
+      }
+    },
+    {
+      "name": "aten.neg.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 117.73322256639995,
+      "dur": 1.835008,
+      "args": {
+        "phase": "prefill",
+        "op_index": 22,
+        "op_kind": "builtin",
+        "predicted_time_s": 1.835008e-06,
+        "compute_time_s": 7.340032e-10,
+        "memory_time_s": 1.835008e-06,
+        "bottleneck": "memory_bound",
+        "flops": 7340032.0,
+        "memory_bytes_total": 14680064,
+        "arithmetic_intensity": 0.5,
+        "input_shape": [
+          1,
+          56,
+          4096,
+          32
+        ],
+        "output_shape": [
+          1,
+          56,
+          4096,
+          32
+        ],
+        "local_input_shape": [
+          1,
+          56,
+          4096,
+          32
+        ],
+        "local_output_shape": [
+          1,
+          56,
+          4096,
+          32
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.stack.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 119.56823056639995,
+      "dur": 3.670016,
+      "args": {
+        "phase": "prefill",
+        "op_index": 23,
+        "op_kind": "builtin",
+        "predicted_time_s": 3.670016e-06,
+        "compute_time_s": 0.0,
+        "memory_time_s": 3.670016e-06,
+        "bottleneck": "memory_bound",
+        "flops": 0.0,
+        "memory_bytes_total": 29360128,
+        "arithmetic_intensity": 0.0,
+        "input_shape": [
+          1,
+          56,
+          4096,
+          32
+        ],
+        "output_shape": [
+          1,
+          56,
+          4096,
+          32,
+          2
+        ],
+        "local_input_shape": [
+          1,
+          56,
+          4096,
+          32
+        ],
+        "local_output_shape": [
+          1,
+          56,
+          4096,
+          32,
+          2
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "dim": -1
+        }
+      }
+    },
+    {
+      "name": "aten.mul.Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 123.23824656639995,
+      "dur": 3.702784,
+      "args": {
+        "phase": "prefill",
+        "op_index": 24,
+        "op_kind": "builtin",
+        "predicted_time_s": 3.702784e-06,
+        "compute_time_s": 1.4680064e-09,
+        "memory_time_s": 3.702784e-06,
+        "bottleneck": "memory_bound",
+        "flops": 14680064.0,
+        "memory_bytes_total": 29622272,
+        "arithmetic_intensity": 0.49557522123893805,
+        "input_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "output_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "local_input_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "local_output_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.add.Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 126.94103056639995,
+      "dur": 5.505024,
+      "args": {
+        "phase": "prefill",
+        "op_index": 25,
+        "op_kind": "builtin",
+        "predicted_time_s": 5.505024e-06,
+        "compute_time_s": 1.4680064e-09,
+        "memory_time_s": 5.505024e-06,
+        "bottleneck": "memory_bound",
+        "flops": 14680064.0,
+        "memory_bytes_total": 44040192,
+        "arithmetic_intensity": 0.3333333333333333,
+        "input_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "output_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "local_input_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "local_output_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.addmm.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 132.44605456639994,
+      "dur": 0.778304,
+      "args": {
+        "phase": "prefill",
+        "op_index": 26,
+        "op_kind": "builtin",
+        "predicted_time_s": 7.78304e-07,
+        "compute_time_s": 6.576668672e-07,
+        "memory_time_s": 7.78304e-07,
+        "bottleneck": "memory_bound",
+        "flops": 6576668672.0,
+        "memory_bytes_total": 6226432,
+        "arithmetic_intensity": 1056.24997944248,
+        "input_shape": [
+          512
+        ],
+        "output_shape": [
+          4096,
+          512
+        ],
+        "local_input_shape": [
+          512
+        ],
+        "local_output_shape": [
+          4096,
+          512
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "row"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.addmm.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 133.22435856639993,
+      "dur": 0.5202479999999999,
+      "args": {
+        "phase": "prefill",
+        "op_index": 27,
+        "op_kind": "builtin",
+        "predicted_time_s": 5.20248e-07,
+        "compute_time_s": 2.147483648e-07,
+        "memory_time_s": 5.20248e-07,
+        "bottleneck": "memory_bound",
+        "flops": 2147483648.0,
+        "memory_bytes_total": 4161984,
+        "arithmetic_intensity": 515.9759499315711,
+        "input_shape": [
+          3584
+        ],
+        "output_shape": [
+          4096,
+          3584
+        ],
+        "local_input_shape": [
+          448
+        ],
+        "local_output_shape": [
+          4096,
+          448
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "column"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.addmm.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 133.74460656639994,
+      "dur": 0.7783519999999999,
+      "args": {
+        "phase": "prefill",
+        "op_index": 28,
+        "op_kind": "builtin",
+        "predicted_time_s": 7.78352e-07,
+        "compute_time_s": 2.147483648e-07,
+        "memory_time_s": 7.78352e-07,
+        "bottleneck": "memory_bound",
+        "flops": 2147483648.0,
+        "memory_bytes_total": 6226816,
+        "arithmetic_intensity": 344.8766830431476,
+        "input_shape": [
+          7168
+        ],
+        "output_shape": [
+          4096,
+          7168
+        ],
+        "local_input_shape": [
+          896
+        ],
+        "local_output_shape": [
+          4096,
+          896
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "column"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.addmm.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 134.52295856639995,
+      "dur": 0.6576668672,
+      "args": {
+        "phase": "prefill",
+        "op_index": 29,
+        "op_kind": "builtin",
+        "predicted_time_s": 6.576668672e-07,
+        "compute_time_s": 6.576668672e-07,
+        "memory_time_s": 4.98696e-07,
+        "bottleneck": "compute_bound",
+        "flops": 6576668672.0,
+        "memory_bytes_total": 3989568,
+        "arithmetic_intensity": 1648.4663682884964,
+        "input_shape": [
+          64
+        ],
+        "output_shape": [
+          4096,
+          64
+        ],
+        "local_input_shape": [
+          64
+        ],
+        "local_output_shape": [
+          4096,
+          64
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "row"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.arange.start",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 135.18062543359994,
+      "dur": 0.000512,
+      "args": {
+        "phase": "prefill",
+        "op_index": 30,
+        "op_kind": "builtin",
+        "predicted_time_s": 5.12e-10,
+        "compute_time_s": 0.0,
+        "memory_time_s": 5.12e-10,
+        "bottleneck": "memory_bound",
+        "flops": 0.0,
+        "memory_bytes_total": 4096,
+        "arithmetic_intensity": 0.0,
+        "input_shape": null,
+        "output_shape": [
+          4096
+        ],
+        "local_input_shape": null,
+        "local_output_shape": [
+          4096
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.arange.start_step",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 135.18113743359993,
+      "dur": 4e-06,
+      "args": {
+        "phase": "prefill",
+        "op_index": 31,
+        "op_kind": "builtin",
+        "predicted_time_s": 4e-12,
+        "compute_time_s": 0.0,
+        "memory_time_s": 4e-12,
+        "bottleneck": "memory_bound",
+        "flops": 0.0,
+        "memory_bytes_total": 32,
+        "arithmetic_intensity": 0.0,
+        "input_shape": null,
+        "output_shape": [
+          32
+        ],
+        "local_input_shape": null,
+        "local_output_shape": [
+          32
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "start": 0,
+          "end": 64,
+          "step": 2
+        }
+      }
+    },
+    {
+      "name": "aten.div.Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 135.18114143359992,
+      "dur": 8e-06,
+      "args": {
+        "phase": "prefill",
+        "op_index": 32,
+        "op_kind": "builtin",
+        "predicted_time_s": 8e-12,
+        "compute_time_s": 3.2e-15,
+        "memory_time_s": 8e-12,
+        "bottleneck": "memory_bound",
+        "flops": 32.0,
+        "memory_bytes_total": 64,
+        "arithmetic_intensity": 0.5,
+        "input_shape": [
+          32
+        ],
+        "output_shape": [
+          32
+        ],
+        "local_input_shape": [
+          32
+        ],
+        "local_output_shape": [
+          32
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.pow.Tensor_Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 135.18114943359993,
+      "dur": 8e-06,
+      "args": {
+        "phase": "prefill",
+        "op_index": 33,
+        "op_kind": "builtin",
+        "predicted_time_s": 8e-12,
+        "compute_time_s": 1.28e-14,
+        "memory_time_s": 8e-12,
+        "bottleneck": "memory_bound",
+        "flops": 128.0,
+        "memory_bytes_total": 64,
+        "arithmetic_intensity": 2.0,
+        "input_shape": [],
+        "output_shape": [
+          32
+        ],
+        "local_input_shape": [],
+        "local_output_shape": [
+          32
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.reciprocal.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 135.18115743359994,
+      "dur": 8e-06,
+      "args": {
+        "phase": "prefill",
+        "op_index": 34,
+        "op_kind": "builtin",
+        "predicted_time_s": 8e-12,
+        "compute_time_s": 3.2e-15,
+        "memory_time_s": 8e-12,
+        "bottleneck": "memory_bound",
+        "flops": 32.0,
+        "memory_bytes_total": 64,
+        "arithmetic_intensity": 0.5,
+        "input_shape": [
+          32
+        ],
+        "output_shape": [
+          32
+        ],
+        "local_input_shape": [
+          32
+        ],
+        "local_output_shape": [
+          32
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.mul.Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 135.18116543359994,
+      "dur": 8e-06,
+      "args": {
+        "phase": "prefill",
+        "op_index": 35,
+        "op_kind": "builtin",
+        "predicted_time_s": 8e-12,
+        "compute_time_s": 3.2e-15,
+        "memory_time_s": 8e-12,
+        "bottleneck": "memory_bound",
+        "flops": 32.0,
+        "memory_bytes_total": 64,
+        "arithmetic_intensity": 0.5,
+        "input_shape": [
+          32
+        ],
+        "output_shape": [
+          32
+        ],
+        "local_input_shape": [
+          32
+        ],
+        "local_output_shape": [
+          32
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.mul.Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 135.18117343359995,
+      "dur": 0.0169,
+      "args": {
+        "phase": "prefill",
+        "op_index": 36,
+        "op_kind": "builtin",
+        "predicted_time_s": 1.69e-08,
+        "compute_time_s": 1.31072e-11,
+        "memory_time_s": 1.69e-08,
+        "bottleneck": "memory_bound",
+        "flops": 131072.0,
+        "memory_bytes_total": 135200,
+        "arithmetic_intensity": 0.9694674556213018,
+        "input_shape": [
+          4096,
+          1
+        ],
+        "output_shape": [
+          4096,
+          32
+        ],
+        "local_input_shape": [
+          4096,
+          1
+        ],
+        "local_output_shape": [
+          4096,
+          32
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.cat.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 135.19807343359994,
+      "dur": 0.065536,
+      "args": {
+        "phase": "prefill",
+        "op_index": 37,
+        "op_kind": "builtin",
+        "predicted_time_s": 6.5536e-08,
+        "compute_time_s": 0.0,
+        "memory_time_s": 6.5536e-08,
+        "bottleneck": "memory_bound",
+        "flops": 0.0,
+        "memory_bytes_total": 524288,
+        "arithmetic_intensity": 0.0,
+        "input_shape": [
+          4096,
+          32
+        ],
+        "output_shape": [
+          4096,
+          64
+        ],
+        "local_input_shape": [
+          4096,
+          32
+        ],
+        "local_output_shape": [
+          4096,
+          64
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "dim": -1
+        }
+      }
+    },
+    {
+      "name": "aten.cos.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 135.26360943359995,
+      "dur": 0.065536,
+      "args": {
+        "phase": "prefill",
+        "op_index": 38,
+        "op_kind": "builtin",
+        "predicted_time_s": 6.5536e-08,
+        "compute_time_s": 1.048576e-10,
+        "memory_time_s": 6.5536e-08,
+        "bottleneck": "memory_bound",
+        "flops": 1048576.0,
+        "memory_bytes_total": 524288,
+        "arithmetic_intensity": 2.0,
+        "input_shape": [
+          4096,
+          64
+        ],
+        "output_shape": [
+          4096,
+          64
+        ],
+        "local_input_shape": [
+          4096,
+          64
+        ],
+        "local_output_shape": [
+          4096,
+          64
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.unsqueeze.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 135.32914543359996,
+      "dur": 0.065536,
+      "args": {
+        "phase": "prefill",
+        "op_index": 39,
+        "op_kind": "builtin",
+        "predicted_time_s": 6.5536e-08,
+        "compute_time_s": 0.0,
+        "memory_time_s": 6.5536e-08,
+        "bottleneck": "memory_bound",
+        "flops": 0.0,
+        "memory_bytes_total": 524288,
+        "arithmetic_intensity": 0.0,
+        "input_shape": [
+          4096,
+          64
+        ],
+        "output_shape": [
+          1,
+          4096,
+          64
+        ],
+        "local_input_shape": [
+          4096,
+          64
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          64
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "dim": 0
+        }
+      }
+    },
+    {
+      "name": "aten.unsqueeze.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 135.39468143359997,
+      "dur": 0.065536,
+      "args": {
+        "phase": "prefill",
+        "op_index": 40,
+        "op_kind": "builtin",
+        "predicted_time_s": 6.5536e-08,
+        "compute_time_s": 0.0,
+        "memory_time_s": 6.5536e-08,
+        "bottleneck": "memory_bound",
+        "flops": 0.0,
+        "memory_bytes_total": 524288,
+        "arithmetic_intensity": 0.0,
+        "input_shape": [
+          1,
+          4096,
+          64
+        ],
+        "output_shape": [
+          1,
+          1,
+          4096,
+          64
+        ],
+        "local_input_shape": [
+          1,
+          4096,
+          64
+        ],
+        "local_output_shape": [
+          1,
+          1,
+          4096,
+          64
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "dim": 0
+        }
+      }
+    },
+    {
+      "name": "aten.sin.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 135.46021743359998,
+      "dur": 0.065536,
+      "args": {
+        "phase": "prefill",
+        "op_index": 41,
+        "op_kind": "builtin",
+        "predicted_time_s": 6.5536e-08,
+        "compute_time_s": 1.048576e-10,
+        "memory_time_s": 6.5536e-08,
+        "bottleneck": "memory_bound",
+        "flops": 1048576.0,
+        "memory_bytes_total": 524288,
+        "arithmetic_intensity": 2.0,
+        "input_shape": [
+          4096,
+          64
+        ],
+        "output_shape": [
+          4096,
+          64
+        ],
+        "local_input_shape": [
+          4096,
+          64
+        ],
+        "local_output_shape": [
+          4096,
+          64
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.unsqueeze.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 135.5257534336,
+      "dur": 0.065536,
+      "args": {
+        "phase": "prefill",
+        "op_index": 42,
+        "op_kind": "builtin",
+        "predicted_time_s": 6.5536e-08,
+        "compute_time_s": 0.0,
+        "memory_time_s": 6.5536e-08,
+        "bottleneck": "memory_bound",
+        "flops": 0.0,
+        "memory_bytes_total": 524288,
+        "arithmetic_intensity": 0.0,
+        "input_shape": [
+          4096,
+          64
+        ],
+        "output_shape": [
+          1,
+          4096,
+          64
+        ],
+        "local_input_shape": [
+          4096,
+          64
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          64
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "dim": 0
+        }
+      }
+    },
+    {
+      "name": "aten.unsqueeze.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 135.5912894336,
+      "dur": 0.065536,
+      "args": {
+        "phase": "prefill",
+        "op_index": 43,
+        "op_kind": "builtin",
+        "predicted_time_s": 6.5536e-08,
+        "compute_time_s": 0.0,
+        "memory_time_s": 6.5536e-08,
+        "bottleneck": "memory_bound",
+        "flops": 0.0,
+        "memory_bytes_total": 524288,
+        "arithmetic_intensity": 0.0,
+        "input_shape": [
+          1,
+          4096,
+          64
+        ],
+        "output_shape": [
+          1,
+          1,
+          4096,
+          64
+        ],
+        "local_input_shape": [
+          1,
+          4096,
+          64
+        ],
+        "local_output_shape": [
+          1,
+          1,
+          4096,
+          64
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "dim": 0
+        }
+      }
+    },
+    {
+      "name": "aten.mul.Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 135.6568254336,
+      "dur": 3.702784,
+      "args": {
+        "phase": "prefill",
+        "op_index": 44,
+        "op_kind": "builtin",
+        "predicted_time_s": 3.702784e-06,
+        "compute_time_s": 1.4680064e-09,
+        "memory_time_s": 3.702784e-06,
+        "bottleneck": "memory_bound",
+        "flops": 14680064.0,
+        "memory_bytes_total": 29622272,
+        "arithmetic_intensity": 0.49557522123893805,
+        "input_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "output_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "local_input_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "local_output_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.slice.Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 139.3596094336,
+      "dur": 2.752512,
+      "args": {
+        "phase": "prefill",
+        "op_index": 45,
+        "op_kind": "builtin",
+        "predicted_time_s": 2.752512e-06,
+        "compute_time_s": 0.0,
+        "memory_time_s": 2.752512e-06,
+        "bottleneck": "memory_bound",
+        "flops": 0.0,
+        "memory_bytes_total": 22020096,
+        "arithmetic_intensity": 0.0,
+        "input_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "output_shape": [
+          1,
+          56,
+          4096,
+          32
+        ],
+        "local_input_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "local_output_shape": [
+          1,
+          56,
+          4096,
+          32
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "dim": 3,
+          "start": 0,
+          "end": 9223372036854775807,
+          "step": 2
+        }
+      }
+    },
+    {
+      "name": "aten.slice.Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 142.1121214336,
+      "dur": 2.752512,
+      "args": {
+        "phase": "prefill",
+        "op_index": 46,
+        "op_kind": "builtin",
+        "predicted_time_s": 2.752512e-06,
+        "compute_time_s": 0.0,
+        "memory_time_s": 2.752512e-06,
+        "bottleneck": "memory_bound",
+        "flops": 0.0,
+        "memory_bytes_total": 22020096,
+        "arithmetic_intensity": 0.0,
+        "input_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "output_shape": [
+          1,
+          56,
+          4096,
+          32
+        ],
+        "local_input_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "local_output_shape": [
+          1,
+          56,
+          4096,
+          32
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "dim": 3,
+          "start": 1,
+          "end": 9223372036854775807,
+          "step": 2
+        }
+      }
+    },
+    {
+      "name": "aten.neg.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 144.8646334336,
+      "dur": 1.835008,
+      "args": {
+        "phase": "prefill",
+        "op_index": 47,
+        "op_kind": "builtin",
+        "predicted_time_s": 1.835008e-06,
+        "compute_time_s": 7.340032e-10,
+        "memory_time_s": 1.835008e-06,
+        "bottleneck": "memory_bound",
+        "flops": 7340032.0,
+        "memory_bytes_total": 14680064,
+        "arithmetic_intensity": 0.5,
+        "input_shape": [
+          1,
+          56,
+          4096,
+          32
+        ],
+        "output_shape": [
+          1,
+          56,
+          4096,
+          32
+        ],
+        "local_input_shape": [
+          1,
+          56,
+          4096,
+          32
+        ],
+        "local_output_shape": [
+          1,
+          56,
+          4096,
+          32
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.stack.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 146.6996414336,
+      "dur": 3.670016,
+      "args": {
+        "phase": "prefill",
+        "op_index": 48,
+        "op_kind": "builtin",
+        "predicted_time_s": 3.670016e-06,
+        "compute_time_s": 0.0,
+        "memory_time_s": 3.670016e-06,
+        "bottleneck": "memory_bound",
+        "flops": 0.0,
+        "memory_bytes_total": 29360128,
+        "arithmetic_intensity": 0.0,
+        "input_shape": [
+          1,
+          56,
+          4096,
+          32
+        ],
+        "output_shape": [
+          1,
+          56,
+          4096,
+          32,
+          2
+        ],
+        "local_input_shape": [
+          1,
+          56,
+          4096,
+          32
+        ],
+        "local_output_shape": [
+          1,
+          56,
+          4096,
+          32,
+          2
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "dim": -1
+        }
+      }
+    },
+    {
+      "name": "aten.mul.Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 150.3696574336,
+      "dur": 3.702784,
+      "args": {
+        "phase": "prefill",
+        "op_index": 49,
+        "op_kind": "builtin",
+        "predicted_time_s": 3.702784e-06,
+        "compute_time_s": 1.4680064e-09,
+        "memory_time_s": 3.702784e-06,
+        "bottleneck": "memory_bound",
+        "flops": 14680064.0,
+        "memory_bytes_total": 29622272,
+        "arithmetic_intensity": 0.49557522123893805,
+        "input_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "output_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "local_input_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "local_output_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.add.Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 154.0724414336,
+      "dur": 5.505024,
+      "args": {
+        "phase": "prefill",
+        "op_index": 50,
+        "op_kind": "builtin",
+        "predicted_time_s": 5.505024e-06,
+        "compute_time_s": 1.4680064e-09,
+        "memory_time_s": 5.505024e-06,
+        "bottleneck": "memory_bound",
+        "flops": 14680064.0,
+        "memory_bytes_total": 44040192,
+        "arithmetic_intensity": 0.3333333333333333,
+        "input_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "output_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "local_input_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "local_output_shape": [
+          1,
+          56,
+          4096,
+          64
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.bmm.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 159.5774654336,
+      "dur": 121.110528,
+      "args": {
+        "phase": "prefill",
+        "op_index": 51,
+        "op_kind": "builtin",
+        "predicted_time_s": 0.000121110528,
+        "compute_time_s": 1.20259084288e-05,
+        "memory_time_s": 0.000121110528,
+        "bottleneck": "memory_bound",
+        "flops": 120259084288.0,
+        "memory_bytes_total": 968884224,
+        "arithmetic_intensity": 124.12121212121212,
+        "input_shape": [
+          56,
+          4096,
+          64
+        ],
+        "output_shape": [
+          56,
+          4096,
+          4096
+        ],
+        "local_input_shape": [
+          56,
+          4096,
+          64
+        ],
+        "local_output_shape": [
+          56,
+          4096,
+          4096
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.bmm.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 280.6879934336,
+      "dur": 121.110528,
+      "args": {
+        "phase": "prefill",
+        "op_index": 52,
+        "op_kind": "builtin",
+        "predicted_time_s": 0.000121110528,
+        "compute_time_s": 1.20259084288e-05,
+        "memory_time_s": 0.000121110528,
+        "bottleneck": "memory_bound",
+        "flops": 120259084288.0,
+        "memory_bytes_total": 968884224,
+        "arithmetic_intensity": 124.12121212121212,
+        "input_shape": [
+          56,
+          4096,
+          64
+        ],
+        "output_shape": [
+          56,
+          4096,
+          4096
+        ],
+        "local_input_shape": [
+          56,
+          4096,
+          64
+        ],
+        "local_output_shape": [
+          56,
+          4096,
+          4096
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.add.Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 401.7985214336,
+      "dur": 352.321536,
+      "args": {
+        "phase": "prefill",
+        "op_index": 53,
+        "op_kind": "builtin",
+        "predicted_time_s": 0.000352321536,
+        "compute_time_s": 9.39524096e-08,
+        "memory_time_s": 0.000352321536,
+        "bottleneck": "memory_bound",
+        "flops": 939524096.0,
+        "memory_bytes_total": 2818572288,
+        "arithmetic_intensity": 0.3333333333333333,
+        "input_shape": [
+          1,
+          56,
+          4096,
+          4096
+        ],
+        "output_shape": [
+          1,
+          56,
+          4096,
+          4096
+        ],
+        "local_input_shape": [
+          1,
+          56,
+          4096,
+          4096
+        ],
+        "local_output_shape": [
+          1,
+          56,
+          4096,
+          4096
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.div.Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 754.1200574336,
+      "dur": 234.881024,
+      "args": {
+        "phase": "prefill",
+        "op_index": 54,
+        "op_kind": "builtin",
+        "predicted_time_s": 0.000234881024,
+        "compute_time_s": 9.39524096e-08,
+        "memory_time_s": 0.000234881024,
+        "bottleneck": "memory_bound",
+        "flops": 939524096.0,
+        "memory_bytes_total": 1879048192,
+        "arithmetic_intensity": 0.5,
+        "input_shape": [
+          1,
+          56,
+          4096,
+          4096
+        ],
+        "output_shape": [
+          1,
+          56,
+          4096,
+          4096
+        ],
+        "local_input_shape": [
+          1,
+          56,
+          4096,
+          4096
+        ],
+        "local_output_shape": [
+          1,
+          56,
+          4096,
+          4096
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten._softmax.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 989.0010814336,
+      "dur": 234.881024,
+      "args": {
+        "phase": "prefill",
+        "op_index": 55,
+        "op_kind": "builtin",
+        "predicted_time_s": 0.000234881024,
+        "compute_time_s": 4.69762048e-07,
+        "memory_time_s": 0.000234881024,
+        "bottleneck": "memory_bound",
+        "flops": 4697620480.0,
+        "memory_bytes_total": 1879048192,
+        "arithmetic_intensity": 2.5,
+        "input_shape": [
+          1,
+          56,
+          4096,
+          4096
+        ],
+        "output_shape": [
+          1,
+          56,
+          4096,
+          4096
+        ],
+        "local_input_shape": [
+          1,
+          56,
+          4096,
+          4096
+        ],
+        "local_output_shape": [
+          1,
+          56,
+          4096,
+          4096
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "dim": -1
+        }
+      }
+    },
+    {
+      "name": "aten.bmm.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 1223.8821054336,
+      "dur": 124.780544,
+      "args": {
+        "phase": "prefill",
+        "op_index": 56,
+        "op_kind": "builtin",
+        "predicted_time_s": 0.000124780544,
+        "compute_time_s": 2.40518168576e-05,
+        "memory_time_s": 0.000124780544,
+        "bottleneck": "memory_bound",
+        "flops": 240518168576.0,
+        "memory_bytes_total": 998244352,
+        "arithmetic_intensity": 240.94117647058823,
+        "input_shape": [
+          56,
+          4096,
+          4096
+        ],
+        "output_shape": [
+          56,
+          4096,
+          128
+        ],
+        "local_input_shape": [
+          56,
+          4096,
+          4096
+        ],
+        "local_output_shape": [
+          56,
+          4096,
+          128
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.addmm.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 1348.6626494335999,
+      "dur": 42.0906795008,
+      "args": {
+        "phase": "prefill",
+        "op_index": 57,
+        "op_kind": "builtin",
+        "predicted_time_s": 4.20906795008e-05,
+        "compute_time_s": 4.20906795008e-05,
+        "memory_time_s": 4.931696e-06,
+        "bottleneck": "compute_bound",
+        "flops": 420906795008.0,
+        "memory_bytes_total": 39453568,
+        "arithmetic_intensity": 10668.408875161811,
+        "input_shape": [
+          7168
+        ],
+        "output_shape": [
+          4096,
+          7168
+        ],
+        "local_input_shape": [
+          896
+        ],
+        "local_output_shape": [
+          4096,
+          896
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "column"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.add.Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 1390.7533289343999,
+      "dur": 11.010048,
+      "args": {
+        "phase": "prefill",
+        "op_index": 58,
+        "op_kind": "builtin",
+        "predicted_time_s": 1.1010048e-05,
+        "compute_time_s": 2.9360128e-09,
+        "memory_time_s": 1.1010048e-05,
+        "bottleneck": "memory_bound",
+        "flops": 29360128.0,
+        "memory_bytes_total": 88080384,
+        "arithmetic_intensity": 0.3333333333333333,
+        "input_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "output_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "local_input_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.native_layer_norm.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 1401.7633769344,
+      "dur": 7.341824000000001,
+      "args": {
+        "phase": "prefill",
+        "op_index": 59,
+        "op_kind": "builtin",
+        "predicted_time_s": 7.341824e-06,
+        "compute_time_s": 2.05520896e-08,
+        "memory_time_s": 7.341824e-06,
+        "bottleneck": "memory_bound",
+        "flops": 205520896.0,
+        "memory_bytes_total": 58734592,
+        "arithmetic_intensity": 3.4991457163778374,
+        "input_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "output_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "local_input_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "normalized_shape": [
+            7168
+          ],
+          "eps": 1e-05
+        }
+      }
+    },
+    {
+      "name": "aten.addmm.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 1409.1052009344,
+      "dur": 0.6576668672,
+      "args": {
+        "phase": "prefill",
+        "op_index": 60,
+        "op_kind": "builtin",
+        "predicted_time_s": 6.576668672e-07,
+        "compute_time_s": 6.576668672e-07,
+        "memory_time_s": 4.63745e-07,
+        "bottleneck": "compute_bound",
+        "flops": 6576668672.0,
+        "memory_bytes_total": 3709960,
+        "arithmetic_intensity": 1772.70608631899,
+        "input_shape": [
+          8
+        ],
+        "output_shape": [
+          4096,
+          8
+        ],
+        "local_input_shape": [
+          8
+        ],
+        "local_output_shape": [
+          4096,
+          8
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "row"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten._softmax.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 1409.7628678016001,
+      "dur": 0.008192,
+      "args": {
+        "phase": "prefill",
+        "op_index": 61,
+        "op_kind": "builtin",
+        "predicted_time_s": 8.192e-09,
+        "compute_time_s": 1.6384e-11,
+        "memory_time_s": 8.192e-09,
+        "bottleneck": "memory_bound",
+        "flops": 163840.0,
+        "memory_bytes_total": 65536,
+        "arithmetic_intensity": 2.5,
+        "input_shape": [
+          1,
+          4096,
+          8
+        ],
+        "output_shape": [
+          1,
+          4096,
+          8
+        ],
+        "local_input_shape": [
+          1,
+          4096,
+          8
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          8
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "dim": -1
+        }
+      }
+    },
+    {
+      "name": "aten.topk.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 1409.7710598016001,
+      "dur": 0.006144,
+      "args": {
+        "phase": "prefill",
+        "op_index": 62,
+        "op_kind": "builtin",
+        "predicted_time_s": 6.144e-09,
+        "compute_time_s": 8.192e-13,
+        "memory_time_s": 6.144e-09,
+        "bottleneck": "memory_bound",
+        "flops": 8192.0,
+        "memory_bytes_total": 49152,
+        "arithmetic_intensity": 0.16666666666666666,
+        "input_shape": [
+          1,
+          4096,
+          8
+        ],
+        "output_shape": [
+          1,
+          4096,
+          2
+        ],
+        "local_input_shape": [
+          1,
+          4096,
+          8
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          2
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "k": 2
+        }
+      }
+    },
+    {
+      "name": "aten.zeros_like.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 1409.7772038016,
+      "dur": 0.004096,
+      "args": {
+        "phase": "prefill",
+        "op_index": 63,
+        "op_kind": "builtin",
+        "predicted_time_s": 4.096e-09,
+        "compute_time_s": 0.0,
+        "memory_time_s": 4.096e-09,
+        "bottleneck": "memory_bound",
+        "flops": 0.0,
+        "memory_bytes_total": 32768,
+        "arithmetic_intensity": 0.0,
+        "input_shape": [
+          1,
+          4096,
+          8
+        ],
+        "output_shape": [
+          1,
+          4096,
+          8
+        ],
+        "local_input_shape": [
+          1,
+          4096,
+          8
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          8
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.scatter.src",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 1409.7812998016,
+      "dur": 0.010239999999999999,
+      "args": {
+        "phase": "prefill",
+        "op_index": 64,
+        "op_kind": "builtin",
+        "predicted_time_s": 1.024e-08,
+        "compute_time_s": 3.2768e-12,
+        "memory_time_s": 1.024e-08,
+        "bottleneck": "memory_bound",
+        "flops": 32768.0,
+        "memory_bytes_total": 81920,
+        "arithmetic_intensity": 0.4,
+        "input_shape": [
+          1,
+          4096,
+          8
+        ],
+        "output_shape": [
+          1,
+          4096,
+          8
+        ],
+        "local_input_shape": [
+          1,
+          4096,
+          8
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          8
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "dim": -1
+        }
+      }
+    },
+    {
+      "name": "aten.addmm.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 1409.7915398016,
+      "dur": 42.0906795008,
+      "args": {
+        "phase": "prefill",
+        "op_index": 65,
+        "op_kind": "builtin",
+        "predicted_time_s": 4.20906795008e-05,
+        "compute_time_s": 4.20906795008e-05,
+        "memory_time_s": 6.914336e-06,
+        "bottleneck": "compute_bound",
+        "flops": 420906795008.0,
+        "memory_bytes_total": 55314688,
+        "arithmetic_intensity": 7609.313370944079,
+        "input_shape": [
+          18432
+        ],
+        "output_shape": [
+          4096,
+          18432
+        ],
+        "local_input_shape": [
+          2304
+        ],
+        "local_output_shape": [
+          4096,
+          2304
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "column"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.silu.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 1451.8822193024,
+      "dur": 18.874368,
+      "args": {
+        "phase": "prefill",
+        "op_index": 66,
+        "op_kind": "builtin",
+        "predicted_time_s": 1.8874368e-05,
+        "compute_time_s": 6.03979776e-08,
+        "memory_time_s": 1.8874368e-05,
+        "bottleneck": "memory_bound",
+        "flops": 603979776.0,
+        "memory_bytes_total": 150994944,
+        "arithmetic_intensity": 4.0,
+        "input_shape": [
+          1,
+          4096,
+          18432
+        ],
+        "output_shape": [
+          1,
+          4096,
+          18432
+        ],
+        "local_input_shape": [
+          1,
+          4096,
+          18432
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          18432
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.addmm.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 1470.7565873024,
+      "dur": 42.0906795008,
+      "args": {
+        "phase": "prefill",
+        "op_index": 67,
+        "op_kind": "builtin",
+        "predicted_time_s": 4.20906795008e-05,
+        "compute_time_s": 4.20906795008e-05,
+        "memory_time_s": 6.914336e-06,
+        "bottleneck": "compute_bound",
+        "flops": 420906795008.0,
+        "memory_bytes_total": 55314688,
+        "arithmetic_intensity": 7609.313370944079,
+        "input_shape": [
+          18432
+        ],
+        "output_shape": [
+          4096,
+          18432
+        ],
+        "local_input_shape": [
+          2304
+        ],
+        "local_output_shape": [
+          4096,
+          2304
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "column"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.mul.Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 1512.8472668032,
+      "dur": 28.311552,
+      "args": {
+        "phase": "prefill",
+        "op_index": 68,
+        "op_kind": "builtin",
+        "predicted_time_s": 2.8311552e-05,
+        "compute_time_s": 7.5497472e-09,
+        "memory_time_s": 2.8311552e-05,
+        "bottleneck": "memory_bound",
+        "flops": 75497472.0,
+        "memory_bytes_total": 226492416,
+        "arithmetic_intensity": 0.3333333333333333,
+        "input_shape": [
+          1,
+          4096,
+          18432
+        ],
+        "output_shape": [
+          1,
+          4096,
+          18432
+        ],
+        "local_input_shape": [
+          1,
+          4096,
+          18432
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          18432
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "custom.fc2.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 1541.1588188032,
+      "dur": 13.5291469824,
+      "args": {
+        "phase": "prefill",
+        "op_index": 69,
+        "op_kind": "custom",
+        "predicted_time_s": 1.35291469824e-05,
+        "compute_time_s": 1.35291469824e-05,
+        "memory_time_s": 6.914944e-06,
+        "bottleneck": "compute_bound",
+        "flops": 135291469824.0,
+        "memory_bytes_total": 55319552,
+        "arithmetic_intensity": 2445.6356736945377,
+        "input_shape": [
+          1,
+          4096,
+          18432
+        ],
+        "output_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "local_input_shape": [
+          1,
+          4096,
+          2304
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "row"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.unsqueeze.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 1554.6879657856,
+      "dur": 0.001024,
+      "args": {
+        "phase": "prefill",
+        "op_index": 70,
+        "op_kind": "builtin",
+        "predicted_time_s": 1.024e-09,
+        "compute_time_s": 0.0,
+        "memory_time_s": 1.024e-09,
+        "bottleneck": "memory_bound",
+        "flops": 0.0,
+        "memory_bytes_total": 8192,
+        "arithmetic_intensity": 0.0,
+        "input_shape": [
+          1,
+          4096
+        ],
+        "output_shape": [
+          1,
+          4096,
+          1
+        ],
+        "local_input_shape": [
+          1,
+          4096
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          1
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "dim": -1
+        }
+      }
+    },
+    {
+      "name": "aten.mul.Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 1554.6889897856,
+      "dur": 7.3405439999999995,
+      "args": {
+        "phase": "prefill",
+        "op_index": 71,
+        "op_kind": "builtin",
+        "predicted_time_s": 7.340544e-06,
+        "compute_time_s": 2.9360128e-09,
+        "memory_time_s": 7.340544e-06,
+        "bottleneck": "memory_bound",
+        "flops": 29360128.0,
+        "memory_bytes_total": 58724352,
+        "arithmetic_intensity": 0.4999651252005301,
+        "input_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "output_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "local_input_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.addmm.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 1562.0295337855998,
+      "dur": 42.0906795008,
+      "args": {
+        "phase": "prefill",
+        "op_index": 72,
+        "op_kind": "builtin",
+        "predicted_time_s": 4.20906795008e-05,
+        "compute_time_s": 4.20906795008e-05,
+        "memory_time_s": 6.914336e-06,
+        "bottleneck": "compute_bound",
+        "flops": 420906795008.0,
+        "memory_bytes_total": 55314688,
+        "arithmetic_intensity": 7609.313370944079,
+        "input_shape": [
+          18432
+        ],
+        "output_shape": [
+          4096,
+          18432
+        ],
+        "local_input_shape": [
+          2304
+        ],
+        "local_output_shape": [
+          4096,
+          2304
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "column"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.silu.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 1604.1202132863998,
+      "dur": 18.874368,
+      "args": {
+        "phase": "prefill",
+        "op_index": 73,
+        "op_kind": "builtin",
+        "predicted_time_s": 1.8874368e-05,
+        "compute_time_s": 6.03979776e-08,
+        "memory_time_s": 1.8874368e-05,
+        "bottleneck": "memory_bound",
+        "flops": 603979776.0,
+        "memory_bytes_total": 150994944,
+        "arithmetic_intensity": 4.0,
+        "input_shape": [
+          1,
+          4096,
+          18432
+        ],
+        "output_shape": [
+          1,
+          4096,
+          18432
+        ],
+        "local_input_shape": [
+          1,
+          4096,
+          18432
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          18432
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.addmm.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 1622.9945812863998,
+      "dur": 42.0906795008,
+      "args": {
+        "phase": "prefill",
+        "op_index": 74,
+        "op_kind": "builtin",
+        "predicted_time_s": 4.20906795008e-05,
+        "compute_time_s": 4.20906795008e-05,
+        "memory_time_s": 6.914336e-06,
+        "bottleneck": "compute_bound",
+        "flops": 420906795008.0,
+        "memory_bytes_total": 55314688,
+        "arithmetic_intensity": 7609.313370944079,
+        "input_shape": [
+          18432
+        ],
+        "output_shape": [
+          4096,
+          18432
+        ],
+        "local_input_shape": [
+          2304
+        ],
+        "local_output_shape": [
+          4096,
+          2304
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "column"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.mul.Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 1665.0852607871998,
+      "dur": 28.311552,
+      "args": {
+        "phase": "prefill",
+        "op_index": 75,
+        "op_kind": "builtin",
+        "predicted_time_s": 2.8311552e-05,
+        "compute_time_s": 7.5497472e-09,
+        "memory_time_s": 2.8311552e-05,
+        "bottleneck": "memory_bound",
+        "flops": 75497472.0,
+        "memory_bytes_total": 226492416,
+        "arithmetic_intensity": 0.3333333333333333,
+        "input_shape": [
+          1,
+          4096,
+          18432
+        ],
+        "output_shape": [
+          1,
+          4096,
+          18432
+        ],
+        "local_input_shape": [
+          1,
+          4096,
+          18432
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          18432
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "custom.fc2.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 1693.3968127871997,
+      "dur": 13.5291469824,
+      "args": {
+        "phase": "prefill",
+        "op_index": 76,
+        "op_kind": "custom",
+        "predicted_time_s": 1.35291469824e-05,
+        "compute_time_s": 1.35291469824e-05,
+        "memory_time_s": 6.914944e-06,
+        "bottleneck": "compute_bound",
+        "flops": 135291469824.0,
+        "memory_bytes_total": 55319552,
+        "arithmetic_intensity": 2445.6356736945377,
+        "input_shape": [
+          1,
+          4096,
+          18432
+        ],
+        "output_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "local_input_shape": [
+          1,
+          4096,
+          2304
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "row"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.unsqueeze.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 1706.9259597695998,
+      "dur": 0.001024,
+      "args": {
+        "phase": "prefill",
+        "op_index": 77,
+        "op_kind": "builtin",
+        "predicted_time_s": 1.024e-09,
+        "compute_time_s": 0.0,
+        "memory_time_s": 1.024e-09,
+        "bottleneck": "memory_bound",
+        "flops": 0.0,
+        "memory_bytes_total": 8192,
+        "arithmetic_intensity": 0.0,
+        "input_shape": [
+          1,
+          4096
+        ],
+        "output_shape": [
+          1,
+          4096,
+          1
+        ],
+        "local_input_shape": [
+          1,
+          4096
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          1
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "dim": -1
+        }
+      }
+    },
+    {
+      "name": "aten.mul.Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 1706.9269837695997,
+      "dur": 7.3405439999999995,
+      "args": {
+        "phase": "prefill",
+        "op_index": 78,
+        "op_kind": "builtin",
+        "predicted_time_s": 7.340544e-06,
+        "compute_time_s": 2.9360128e-09,
+        "memory_time_s": 7.340544e-06,
+        "bottleneck": "memory_bound",
+        "flops": 29360128.0,
+        "memory_bytes_total": 58724352,
+        "arithmetic_intensity": 0.4999651252005301,
+        "input_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "output_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "local_input_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.stack.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 1714.2675277695996,
+      "dur": 14.680064,
+      "args": {
+        "phase": "prefill",
+        "op_index": 79,
+        "op_kind": "builtin",
+        "predicted_time_s": 1.4680064e-05,
+        "compute_time_s": 0.0,
+        "memory_time_s": 1.4680064e-05,
+        "bottleneck": "memory_bound",
+        "flops": 0.0,
+        "memory_bytes_total": 117440512,
+        "arithmetic_intensity": 0.0,
+        "input_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "output_shape": [
+          1,
+          4096,
+          2,
+          7168
+        ],
+        "local_input_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          2,
+          7168
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "dim": 2
+        }
+      }
+    },
+    {
+      "name": "aten.sum.dim_IntList",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 1728.9475917695995,
+      "dur": 11.010048,
+      "args": {
+        "phase": "prefill",
+        "op_index": 80,
+        "op_kind": "builtin",
+        "predicted_time_s": 1.1010048e-05,
+        "compute_time_s": 2.9360128e-09,
+        "memory_time_s": 1.1010048e-05,
+        "bottleneck": "memory_bound",
+        "flops": 29360128.0,
+        "memory_bytes_total": 88080384,
+        "arithmetic_intensity": 0.3333333333333333,
+        "input_shape": [
+          1,
+          4096,
+          2,
+          7168
+        ],
+        "output_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "local_input_shape": [
+          1,
+          4096,
+          2,
+          7168
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "dim": [
+            2
+          ]
+        }
+      }
+    },
+    {
+      "name": "aten.add.Tensor",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 1739.9576397695996,
+      "dur": 11.010048,
+      "args": {
+        "phase": "prefill",
+        "op_index": 81,
+        "op_kind": "builtin",
+        "predicted_time_s": 1.1010048e-05,
+        "compute_time_s": 2.9360128e-09,
+        "memory_time_s": 1.1010048e-05,
+        "bottleneck": "memory_bound",
+        "flops": 29360128.0,
+        "memory_bytes_total": 88080384,
+        "arithmetic_intensity": 0.3333333333333333,
+        "input_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "output_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "local_input_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {}
+      }
+    },
+    {
+      "name": "aten.native_layer_norm.default",
+      "cat": "operator",
+      "ph": "X",
+      "pid": 1,
+      "tid": 0,
+      "ts": 1750.9676877695997,
+      "dur": 7.341824000000001,
+      "args": {
+        "phase": "prefill",
+        "op_index": 82,
+        "op_kind": "builtin",
+        "predicted_time_s": 7.341824e-06,
+        "compute_time_s": 2.05520896e-08,
+        "memory_time_s": 7.341824e-06,
+        "bottleneck": "memory_bound",
+        "flops": 205520896.0,
+        "memory_bytes_total": 58734592,
+        "arithmetic_intensity": 3.4991457163778374,
+        "input_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "output_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "local_input_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "local_output_shape": [
+          1,
+          4096,
+          7168
+        ],
+        "precision_context": {
+          "storage_precision": "fp8",
+          "compute_precision": "fp8",
+          "accum_precision": "fp16"
+        },
+        "parallelism": {
+          "tp_degree": 8,
+          "pp_degree": 9,
+          "dp_degree": 1,
+          "tp_mode": "replicated"
+        },
+        "attrs": {
+          "normalized_shape": [
+            7168
+          ],
+          "eps": 1e-05
+        }
+      }
+    }
+  ],
+  "displayTimeUnit": "ms"
+}

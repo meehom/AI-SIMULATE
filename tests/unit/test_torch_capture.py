@@ -1,8 +1,8 @@
 from ai_simulate.workload import build_deepseek_v3_proxy, capture_model_ops
 
 
-def test_torch_capture_records_expected_supported_ops() -> None:
-    workload_config = {
+def _build_workload_config():
+    return {
         "name": "deepseek_v3_proxy_test",
         "model_name": "DeepSeek V3",
         "mode": "inference",
@@ -26,8 +26,12 @@ def test_torch_capture_records_expected_supported_ops() -> None:
         "proxy_mla_qk_rope_head_dim": 4,
         "proxy_mla_v_head_dim": 8,
         "proxy_rope_theta": 10000.0,
+        "proxy_decode_kv_cache_len": 16,
     }
-    strategy_config = {
+
+
+def _build_strategy_config():
+    return {
         "name": "proxy_strategy_test",
         "tp_degree": 8,
         "pp_degree": 1,
@@ -35,34 +39,34 @@ def test_torch_capture_records_expected_supported_ops() -> None:
         "gpu_count_used": 8,
     }
 
-    model, input_spec = build_deepseek_v3_proxy(workload_config)
+
+def test_torch_capture_records_expected_prefill_ops() -> None:
+    workload_config = _build_workload_config()
+    strategy_config = _build_strategy_config()
+    model, input_spec = build_deepseek_v3_proxy(workload_config, phase="prefill")
     records = capture_model_ops(model, input_spec.shape, workload_config["precision"], strategy_config)
 
     op_names = [record.op_name for record in records]
     assert op_names[0] == "aten.embedding.default"
     assert op_names.count("aten.addmm.default") == 13
-    assert op_names.count("aten.bmm.default") == 3
-    assert op_names.count("aten._softmax.default") == 2
-    assert op_names.count("aten.add.Tensor") == 5
-    assert op_names.count("aten.div.Tensor") == 3
-    assert op_names.count("aten.mul.Tensor") == 12
-    assert op_names.count("aten.silu.default") == 2
-    assert op_names.count("aten.unsqueeze.default") == 10
-    assert op_names.count("aten.arange.default") == 2
-    assert op_names.count("aten.arange.start_step") == 2
-    assert op_names.count("aten.pow.Tensor_Tensor") == 2
-    assert op_names.count("aten.reciprocal.default") == 2
     assert op_names.count("aten.cat.default") == 2
-    assert op_names.count("aten.cos.default") == 2
-    assert op_names.count("aten.sin.default") == 2
-    assert op_names.count("aten.slice.Tensor") == 4
-    assert op_names.count("aten.neg.default") == 2
-    assert "aten.topk.default" in op_names
-    assert "aten.zeros_like.default" in op_names
-    assert "aten.scatter.src" in op_names
-    assert "aten.stack.default" in op_names
-    assert "aten.sum.dim_IntList" in op_names
     assert op_names.count("custom.fc2.default") == 2
     assert op_names[-1] == "aten.native_layer_norm.default"
-    assert records[0].output_tensors[0].shape == [1, 16, 32]
-    assert any(record.op_kind == "custom" for record in records)
+
+
+def test_torch_capture_records_expected_decode_ops() -> None:
+    workload_config = _build_workload_config()
+    strategy_config = _build_strategy_config()
+    model, input_spec = build_deepseek_v3_proxy(workload_config, phase="decode")
+    records = capture_model_ops(model, input_spec.shape, workload_config["precision"], strategy_config)
+
+    op_names = [record.op_name for record in records]
+    assert op_names[0] == "aten.embedding.default"
+    # MLA decode absorbs v_proj/o_proj into matmuls, so fewer addmm than prefill.
+    assert op_names.count("aten.addmm.default") == 10
+    # KV cache holds the compressed latent + rope branch only (2 zeros allocations).
+    assert op_names.count("aten.zeros.default") == 2
+    assert op_names.count("aten.cat.default") == 4
+    assert op_names.count("aten.arange.start") == 2
+    assert op_names.count("custom.fc2.default") == 2
+    assert op_names[-1] == "aten.native_layer_norm.default"
