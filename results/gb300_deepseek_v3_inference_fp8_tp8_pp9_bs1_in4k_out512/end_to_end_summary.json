@@ -1,0 +1,42 @@
+{
+  "experiment_name": "gb300_deepseek_v3_inference_fp8_tp8_pp9_bs1_in4k_out512",
+  "workload": {
+    "model_name": "DeepSeek V3",
+    "precision": "fp8",
+    "global_batch_size": 1,
+    "input_seq_len": 4096,
+    "output_seq_len": 512
+  },
+  "prefill": {
+    "predicted_time_s": 0.0017583095117695998,
+    "captured_op_count": 83,
+    "total_flops": 2934216008128.0
+  },
+  "decode": {
+    "per_step_predicted_time_s": 0.00021676552924999984,
+    "estimated_total_decode_time_s": 0.11098395097599992,
+    "estimated_output_steps": 512,
+    "kv_cache_seq_len": 4352
+  },
+  "request_level_metrics": {
+    "time_to_first_token_s": 0.0017583095117695998,
+    "inter_token_latency_s": 0.00021676552924999984,
+    "request_total_time_s": 0.11274226048776952,
+    "decode_throughput_tokens_per_s": 4613.279627346472,
+    "request_throughput_tokens_per_s": 4541.331686848187
+  },
+  "artifacts": {
+    "prefill_analysis": "/Users/meehomliao/Desktop/AI-simulate/results/gb300_deepseek_v3_inference_fp8_tp8_pp9_bs1_in4k_out512/meta_hook_analysis_prefill.json",
+    "decode_analysis": "/Users/meehomliao/Desktop/AI-simulate/results/gb300_deepseek_v3_inference_fp8_tp8_pp9_bs1_in4k_out512/meta_hook_analysis_decode.json",
+    "prefill_op_csv": "/Users/meehomliao/Desktop/AI-simulate/results/gb300_deepseek_v3_inference_fp8_tp8_pp9_bs1_in4k_out512/op_trace_prefill.csv",
+    "decode_op_csv": "/Users/meehomliao/Desktop/AI-simulate/results/gb300_deepseek_v3_inference_fp8_tp8_pp9_bs1_in4k_out512/op_trace_decode.csv",
+    "prefill_trace": "/Users/meehomliao/Desktop/AI-simulate/results/gb300_deepseek_v3_inference_fp8_tp8_pp9_bs1_in4k_out512/chrome_trace_prefill.json",
+    "decode_trace": "/Users/meehomliao/Desktop/AI-simulate/results/gb300_deepseek_v3_inference_fp8_tp8_pp9_bs1_in4k_out512/chrome_trace_decode.json"
+  },
+  "generated_at_utc": "2026-07-07T15:42:48.779884+00:00",
+  "notes": [
+    "Time-to-first-token is modeled as the prefill cost.",
+    "Inter-token latency is the average per-step decode cost (average KV cache length).",
+    "Request total time = prefill + per-step-decode * output_seq_len."
+  ]
+}

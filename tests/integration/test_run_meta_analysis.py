@@ -2,7 +2,7 @@ import csv
 import json
 from pathlib import Path
 
-from ai_simulate.simulator import run_meta_analysis_experiment
+from ai_simulate.simulator import run_end_to_end_experiment, run_meta_analysis_experiment
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -62,3 +62,19 @@ def test_run_decode_experiment_writes_result_file() -> None:
     assert payload["analysis"]["proxy_input_spec"]["kv_cache_seq_len"] == 4352
     assert payload["analysis"]["decode_estimate"]["estimated_output_steps"] == 512
     assert payload["analysis"]["decode_estimate"]["estimated_total_decode_time_s"] > payload["analysis"]["decode_estimate"]["per_step_predicted_time_s"]
+
+
+def test_run_end_to_end_experiment_writes_summary() -> None:
+    summary = run_end_to_end_experiment(EXPERIMENT_PATH)
+    summary_path = Path(summary["summary_output_path"])
+    assert summary_path.exists()
+
+    payload = json.loads(summary_path.read_text(encoding="utf-8"))
+    metrics = payload["request_level_metrics"]
+    assert payload["experiment_name"] == "gb300_deepseek_v3_inference_fp8_tp8_pp9_bs1_in4k_out512"
+    assert metrics["time_to_first_token_s"] > 0
+    assert metrics["inter_token_latency_s"] > 0
+    assert metrics["request_total_time_s"] > metrics["time_to_first_token_s"]
+    assert metrics["decode_throughput_tokens_per_s"] > 0
+    assert metrics["request_throughput_tokens_per_s"] > 0
+    assert payload["decode"]["estimated_output_steps"] == 512

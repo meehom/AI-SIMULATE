@@ -7774,7 +7774,7 @@
     },
     "recorded_output_seq_len": 512
   },
-  "generated_at_utc": "2026-07-07T15:27:35.843242+00:00",
+  "generated_at_utc": "2026-07-07T15:42:48.744019+00:00",
   "notes": [
     "This prototype uses a structural DeepSeek V3 MLA + MoE proxy.",
     "Analysis phase is restricted to prefill semantics in v1.",

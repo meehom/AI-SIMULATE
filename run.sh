@@ -8,3 +8,4 @@ EXPERIMENT=configs/experiments/gb300_deepseek_v3_inference_fp8_tp8_pp9_bs1_in4k_
 
 PYTHONPATH=src python scripts/run_meta_analysis.py --experiment "$EXPERIMENT" --phase prefill
 PYTHONPATH=src python scripts/run_meta_analysis.py --experiment "$EXPERIMENT" --phase decode
+PYTHONPATH=src python scripts/run_meta_analysis.py --experiment "$EXPERIMENT" --phase end_to_end

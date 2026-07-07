@@ -239,3 +239,96 @@ def run_meta_analysis_experiment(experiment_path: str | Path, phase: str = "pref
     result_payload["op_csv_path"] = str(csv_path)
     result_payload["trace_output_path"] = str(trace_path)
     return result_payload
+
+
+def _build_end_to_end_summary(
+    experiment_name: str,
+    workload_config: Dict[str, Any],
+    prefill_result: Dict[str, Any],
+    decode_result: Dict[str, Any],
+) -> Dict[str, Any]:
+    input_seq_len = int(workload_config["input_seq_len"])
+    output_seq_len = int(workload_config["output_seq_len"])
+
+    prefill_time_s = float(prefill_result["analysis"]["summary"]["total_predicted_time_s"])
+    per_step_decode_time_s = float(decode_result["analysis"]["decode_estimate"]["per_step_predicted_time_s"])
+    total_decode_time_s = float(decode_result["analysis"]["decode_estimate"]["estimated_total_decode_time_s"])
+
+    # Time to first token = prefill cost (produces the first generated token).
+    time_to_first_token_s = prefill_time_s
+    # Inter-token latency = average per-step decode cost for subsequent tokens.
+    inter_token_latency_s = per_step_decode_time_s
+    request_total_time_s = prefill_time_s + total_decode_time_s
+
+    generated_tokens = output_seq_len
+    decode_throughput_tokens_per_s = (
+        generated_tokens / total_decode_time_s if total_decode_time_s > 0 else 0.0
+    )
+    request_throughput_tokens_per_s = (
+        generated_tokens / request_total_time_s if request_total_time_s > 0 else 0.0
+    )
+
+    return {
+        "experiment_name": experiment_name,
+        "workload": {
+            "model_name": workload_config["model_name"],
+            "precision": workload_config["precision"],
+            "global_batch_size": int(workload_config["global_batch_size"]),
+            "input_seq_len": input_seq_len,
+            "output_seq_len": output_seq_len,
+        },
+        "prefill": {
+            "predicted_time_s": prefill_time_s,
+            "captured_op_count": prefill_result["analysis"]["summary"]["captured_op_count"],
+            "total_flops": prefill_result["analysis"]["summary"]["total_flops"],
+        },
+        "decode": {
+            "per_step_predicted_time_s": per_step_decode_time_s,
+            "estimated_total_decode_time_s": total_decode_time_s,
+            "estimated_output_steps": generated_tokens,
+            "kv_cache_seq_len": decode_result["analysis"]["proxy_input_spec"]["kv_cache_seq_len"],
+        },
+        "request_level_metrics": {
+            "time_to_first_token_s": time_to_first_token_s,
+            "inter_token_latency_s": inter_token_latency_s,
+            "request_total_time_s": request_total_time_s,
+            "decode_throughput_tokens_per_s": decode_throughput_tokens_per_s,
+            "request_throughput_tokens_per_s": request_throughput_tokens_per_s,
+        },
+        "artifacts": {
+            "prefill_analysis": prefill_result["output_path"],
+            "decode_analysis": decode_result["output_path"],
+            "prefill_op_csv": prefill_result["op_csv_path"],
+            "decode_op_csv": decode_result["op_csv_path"],
+            "prefill_trace": prefill_result["trace_output_path"],
+            "decode_trace": decode_result["trace_output_path"],
+        },
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "notes": [
+            "Time-to-first-token is modeled as the prefill cost.",
+            "Inter-token latency is the average per-step decode cost (average KV cache length).",
+            "Request total time = prefill + per-step-decode * output_seq_len.",
+        ],
+    }
+
+
+def run_end_to_end_experiment(experiment_path: str | Path) -> Dict[str, Any]:
+    prefill_result = run_meta_analysis_experiment(experiment_path, phase="prefill")
+    decode_result = run_meta_analysis_experiment(experiment_path, phase="decode")
+
+    resolved_experiment = load_experiment(experiment_path)
+    summary = _build_end_to_end_summary(
+        experiment_name=resolved_experiment.experiment_config["name"],
+        workload_config=resolved_experiment.workload_config,
+        prefill_result=prefill_result,
+        decode_result=decode_result,
+    )
+
+    output_dir = resolved_experiment.output_dir
+    output_dir.mkdir(parents=True, exist_ok=True)
+    summary_path = output_dir / "end_to_end_summary.json"
+    with summary_path.open("w", encoding="utf-8") as handle:
+        json.dump(summary, handle, indent=2, ensure_ascii=False)
+
+    summary["summary_output_path"] = str(summary_path)
+    return summary
