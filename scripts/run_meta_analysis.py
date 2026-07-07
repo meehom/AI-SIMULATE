@@ -36,6 +36,7 @@ def main() -> None:
                 req_tp=metrics["request_throughput_tokens_per_s"],
             )
         )
+        print(f"Decode curve CSV: {summary['decode_curve_csv_path']}")
         return
 
     result = run_meta_analysis_experiment(Path(args.experiment), phase=args.phase)

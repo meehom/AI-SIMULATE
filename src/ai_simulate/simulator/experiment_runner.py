@@ -312,6 +312,40 @@ def _build_end_to_end_summary(
     }
 
 
+def _build_decode_latency_curve(
+    input_seq_len: int,
+    output_seq_len: int,
+    averaged_per_step_time_s: float,
+) -> list[Dict[str, float | int]]:
+    start_cache_len = input_seq_len
+    avg_cache_len = input_seq_len + (output_seq_len / 2.0)
+    curve = []
+    for step in range(1, output_seq_len + 1):
+        cache_len = start_cache_len + (step - 1)
+        if avg_cache_len > 0:
+            step_time_s = averaged_per_step_time_s * (cache_len / avg_cache_len)
+        else:
+            step_time_s = averaged_per_step_time_s
+        curve.append(
+            {
+                "step": step,
+                "kv_cache_seq_len": cache_len,
+                "predicted_step_time_s": step_time_s,
+            }
+        )
+    return curve
+
+
+def _write_decode_curve_csv(output_dir: Path, curve_rows: list[Dict[str, float | int]]) -> Path:
+    csv_path = output_dir / "decode_curve.csv"
+    with csv_path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.writer(handle)
+        writer.writerow(["step", "kv_cache_seq_len", "predicted_step_time_s"])
+        for row in curve_rows:
+            writer.writerow([row["step"], row["kv_cache_seq_len"], row["predicted_step_time_s"]])
+    return csv_path
+
+
 def run_end_to_end_experiment(experiment_path: str | Path) -> Dict[str, Any]:
     prefill_result = run_meta_analysis_experiment(experiment_path, phase="prefill")
     decode_result = run_meta_analysis_experiment(experiment_path, phase="decode")
@@ -324,11 +358,22 @@ def run_end_to_end_experiment(experiment_path: str | Path) -> Dict[str, Any]:
         decode_result=decode_result,
     )
 
+    curve_rows = _build_decode_latency_curve(
+        input_seq_len=int(resolved_experiment.workload_config["input_seq_len"]),
+        output_seq_len=int(resolved_experiment.workload_config["output_seq_len"]),
+        averaged_per_step_time_s=float(summary["decode"]["per_step_predicted_time_s"]),
+    )
+
     output_dir = resolved_experiment.output_dir
     output_dir.mkdir(parents=True, exist_ok=True)
     summary_path = output_dir / "end_to_end_summary.json"
     with summary_path.open("w", encoding="utf-8") as handle:
         json.dump(summary, handle, indent=2, ensure_ascii=False)
 
+    decode_curve_csv = _write_decode_curve_csv(output_dir, curve_rows)
+    summary["decode_latency_curve"] = curve_rows
+    summary["decode_curve_csv_path"] = str(decode_curve_csv)
     summary["summary_output_path"] = str(summary_path)
+    with summary_path.open("w", encoding="utf-8") as handle:
+        json.dump(summary, handle, indent=2, ensure_ascii=False)
     return summary

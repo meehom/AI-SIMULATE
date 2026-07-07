@@ -8243,7 +8243,7 @@
       "estimated_output_steps": 512
     }
   },
-  "generated_at_utc": "2026-07-07T15:42:48.769068+00:00",
+  "generated_at_utc": "2026-07-07T15:58:33.334552+00:00",
   "notes": [
     "This prototype uses a structural DeepSeek V3 MLA + MoE proxy.",
     "Analysis phase is restricted to decode semantics in v1.",
